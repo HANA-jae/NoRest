@@ -2,22 +2,6 @@ import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useUiStore } from '@/store/ui.store';
 
-const formStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '16px',
-  maxWidth: '400px',
-  margin: '0 auto',
-};
-
-const errorStyle: React.CSSProperties = {
-  color: '#d32f2f',
-  fontSize: '14px',
-  padding: '8px',
-  backgroundColor: '#ffebee',
-  borderRadius: '4px',
-};
-
 export function RegisterForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -35,44 +19,61 @@ export function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={formStyle}>
-      {error && <div style={errorStyle}>{error}</div>}
+    <form onSubmit={handleSubmit} className="space-y-5">
+      {error && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
+          {error}
+        </div>
+      )}
       <div>
-        <label htmlFor="name">Name</label>
+        <label htmlFor="reg-name" className="block text-sm font-medium text-neutral-700 mb-1.5">
+          이름
+        </label>
         <input
-          id="name"
+          id="reg-name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="John Doe"
+          placeholder="홍길동"
           required
+          className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
         />
       </div>
       <div>
-        <label htmlFor="email">Email</label>
+        <label htmlFor="reg-email" className="block text-sm font-medium text-neutral-700 mb-1.5">
+          이메일
+        </label>
         <input
-          id="email"
+          id="reg-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="user@example.com"
+          placeholder="name@example.com"
           required
+          className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
         />
       </div>
       <div>
-        <label htmlFor="password">Password</label>
+        <label htmlFor="reg-password" className="block text-sm font-medium text-neutral-700 mb-1.5">
+          비밀번호
+        </label>
         <input
-          id="password"
+          id="reg-password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Min 8 chars, uppercase, number, special char"
+          placeholder="8자 이상, 대문자/숫자/특수문자 포함"
           required
           minLength={8}
+          className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
         />
       </div>
-      <button type="submit" className="btn-primary" disabled={isLoading}>
-        {isLoading ? 'Registering...' : 'Register'}
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full py-3 bg-neutral-900 text-white rounded-lg font-medium text-sm hover:bg-neutral-800 active:bg-neutral-700 transition-colors disabled:opacity-50"
+      >
+        {isLoading ? '가입 중...' : '회원가입'}
       </button>
     </form>
   );

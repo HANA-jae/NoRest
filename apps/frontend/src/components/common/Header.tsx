@@ -1,69 +1,59 @@
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/auth.store';
+import { useUiStore } from '@/store/ui.store';
 import { useAuth } from '@/hooks/useAuth';
+import { LoginModal } from '@/components/auth/LoginModal';
 import { ROUTES } from '@/router/routes';
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '12px 24px',
-  backgroundColor: '#1976d2',
-  color: 'white',
-};
-
-const navStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '16px',
-  alignItems: 'center',
-};
-
-const linkStyle: React.CSSProperties = {
-  color: 'white',
-  textDecoration: 'none',
-  fontWeight: 500,
-};
-
-const logoutBtnStyle: React.CSSProperties = {
-  backgroundColor: 'rgba(255,255,255,0.2)',
-  color: 'white',
-  border: 'none',
-  padding: '6px 12px',
-  borderRadius: '4px',
-  cursor: 'pointer',
-};
 
 export function Header() {
   const { isAuthenticated, user } = useAuthStore();
+  const { openLoginModal } = useUiStore();
   const { logout } = useAuth();
 
   return (
-    <header style={headerStyle}>
-      <Link to={ROUTES.HOME} style={{ ...linkStyle, fontSize: '20px' }}>
-        HAN
-      </Link>
-      <nav style={navStyle}>
-        {isAuthenticated ? (
-          <>
-            <span>{user?.name}</span>
-            <Link to={ROUTES.DASHBOARD} style={linkStyle}>
-              Dashboard
-            </Link>
-            <button style={logoutBtnStyle} onClick={logout}>
-              Logout
-            </button>
-          </>
-        ) : (
-          <>
-            <Link to={ROUTES.LOGIN} style={linkStyle}>
-              Login
-            </Link>
-            <Link to={ROUTES.REGISTER} style={linkStyle}>
-              Register
-            </Link>
-          </>
-        )}
-      </nav>
-    </header>
+    <>
+      <header className="border-b border-neutral-200 bg-white">
+        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+          <Link to={ROUTES.HOME} className="text-lg font-bold text-neutral-900 tracking-tight no-underline">
+            HAN
+          </Link>
+          <nav className="flex items-center gap-4">
+            {isAuthenticated ? (
+              <>
+                <span className="text-sm text-neutral-500">{user?.name}</span>
+                <Link
+                  to={ROUTES.DASHBOARD}
+                  className="text-sm text-neutral-600 hover:text-neutral-900 no-underline transition-colors"
+                >
+                  대시보드
+                </Link>
+                <button
+                  onClick={logout}
+                  className="text-sm text-neutral-400 hover:text-neutral-600 transition-colors"
+                >
+                  로그아웃
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={openLoginModal}
+                  className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
+                >
+                  로그인
+                </button>
+                <Link
+                  to={ROUTES.REGISTER}
+                  className="text-sm px-4 py-1.5 bg-neutral-900 text-white rounded-lg no-underline hover:bg-neutral-800 transition-colors"
+                >
+                  회원가입
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
+      </header>
+      <LoginModal />
+    </>
   );
 }

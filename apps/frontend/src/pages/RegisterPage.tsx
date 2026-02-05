@@ -1,32 +1,29 @@
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { RegisterForm } from '@/components/auth/RegisterForm';
+import { useUiStore } from '@/store/ui.store';
 import { ROUTES } from '@/router/routes';
 
-const pageStyle: React.CSSProperties = {
-  padding: '40px 20px',
-};
-
-const titleStyle: React.CSSProperties = {
-  textAlign: 'center',
-  marginBottom: '24px',
-  fontSize: '24px',
-  fontWeight: 600,
-};
-
-const footerStyle: React.CSSProperties = {
-  textAlign: 'center',
-  marginTop: '16px',
-  fontSize: '14px',
-  color: '#666',
-};
-
 export function RegisterPage() {
+  const navigate = useNavigate();
+  const { openLoginModal } = useUiStore();
+
+  const handleLoginClick = () => {
+    navigate(ROUTES.HOME);
+    openLoginModal();
+  };
+
   return (
-    <div style={pageStyle}>
-      <h2 style={titleStyle}>Register</h2>
+    <div className="max-w-sm mx-auto px-6 py-16">
+      <h2 className="text-2xl font-bold text-neutral-900 text-center mb-8">회원가입</h2>
       <RegisterForm />
-      <p style={footerStyle}>
-        Already have an account? <Link to={ROUTES.LOGIN}>Login</Link>
+      <p className="mt-6 text-center text-sm text-neutral-400">
+        이미 계정이 있으신가요?{' '}
+        <button
+          onClick={handleLoginClick}
+          className="text-neutral-900 font-medium hover:underline"
+        >
+          로그인
+        </button>
       </p>
     </div>
   );

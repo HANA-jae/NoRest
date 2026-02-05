@@ -11,6 +11,8 @@ export function useAuth() {
   const { login: storeLogin, logout: storeLogout, refreshToken } = useAuthStore();
   const { setLoading, setError, clearError } = useUiStore();
 
+  const { closeLoginModal } = useUiStore();
+
   const login = useCallback(
     async (payload: LoginPayload) => {
       setLoading(true);
@@ -18,17 +20,18 @@ export function useAuth() {
       try {
         const response = await authService.login(payload);
         storeLogin(response.user, response.accessToken, response.refreshToken);
+        closeLoginModal();
         navigate(ROUTES.DASHBOARD);
       } catch (err: unknown) {
         const message =
-          err instanceof Error ? err.message : 'Login failed';
+          err instanceof Error ? err.message : '로그인에 실패했습니다';
         setError(message);
         throw err;
       } finally {
         setLoading(false);
       }
     },
-    [storeLogin, navigate, setLoading, setError, clearError],
+    [storeLogin, navigate, setLoading, setError, clearError, closeLoginModal],
   );
 
   const register = useCallback(
@@ -60,7 +63,7 @@ export function useAuth() {
       // Logout even if API call fails
     } finally {
       storeLogout();
-      navigate(ROUTES.LOGIN);
+      navigate(ROUTES.HOME);
     }
   }, [storeLogout, navigate, refreshToken]);
 

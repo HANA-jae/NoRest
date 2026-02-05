@@ -1,21 +1,13 @@
 import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 
-const mainStyle: React.CSSProperties = {
-  flex: 1,
-  padding: '24px',
-  maxWidth: '1200px',
-  margin: '0 auto',
-  width: '100%',
-};
-
 export function Layout() {
   return (
-    <>
+    <div className="min-h-screen bg-neutral-50 flex flex-col">
       <Header />
-      <main style={mainStyle}>
+      <main className="flex-1">
         <Outlet />
       </main>
-    </>
+    </div>
   );
 }
