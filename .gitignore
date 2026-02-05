@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Temp
+*.tmp
+*.temp
+
+# Vite generated
+*.d.ts
+!src/vite-env.d.ts
+vite.config.d.ts
+
+# pnpm
+.pnpm-approve-builds.json
+
+# opencode
+.opencode/

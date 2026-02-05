@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(opencode --version:*)",
+      "Bash(npm install:*)",
+      "Bash(oh-my-opencode install:*)",
+      "Bash(/c/Users/C26A-006/scoop/shims/opencode:*)",
+      "Bash(node --version:*)",
+      "Bash(export PATH=\"$PATH:/c/Program Files/Go/bin:$HOME/go/bin\")",
+      "Bash(opencode auth login:*)",
+      "Bash(opencode --help:*)",
+      "Bash(timeout 10 opencode:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(curl:*)"
+    ]
+  }
+}

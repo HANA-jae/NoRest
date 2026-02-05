@@ -1,0 +1,46 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
+import { UsersService } from '../../users/users.service';
+import { RedisService } from '../../redis/redis.service';
+import { REDIS_BLACKLIST_PREFIX } from '../../common/constants';
+import { Request } from 'express';
+import { createHash } from 'crypto';
+
+@Injectable()
+export class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwt') {
+  constructor(
+    configService: ConfigService,
+    private readonly usersService: UsersService,
+    private readonly redisService: RedisService,
+  ) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: configService.get('jwt.accessSecret'),
+      passReqToCallback: true,
+    });
+  }
+
+  async validate(req: Request, payload: JwtPayload) {
+    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+    if (token) {
+      const tokenHash = createHash('sha256').update(token).digest('hex');
+      const isBlacklisted = await this.redisService.exists(
+        `${REDIS_BLACKLIST_PREFIX}${tokenHash}`,
+      );
+      if (isBlacklisted) {
+        throw new UnauthorizedException('Token has been revoked');
+      }
+    }
+
+    const user = await this.usersService.findById(payload.sub);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return { id: user.id, email: user.email, role: user.role };
+  }
+}
