@@ -18,7 +18,7 @@ export function Header() {
             to={ROUTES.HOME}
             className="text-xl font-bold text-neutral-900 tracking-tight"
           >
-            HAN
+            그만둘까
           </Link>
 
           <nav className="flex items-center gap-6">

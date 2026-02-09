@@ -6,6 +6,7 @@ import { RegisterPage } from '@/pages/RegisterPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { SimulatorPage } from '@/pages/SimulatorPage';
+import { ResignationQuizPage } from '@/pages/ResignationQuizPage';
 import { SalaryCalculatorPage } from '@/pages/SalaryCalculatorPage';
 import { PensionCalculatorPage } from '@/pages/PensionCalculatorPage';
 import { JobGuidePage } from '@/pages/JobGuidePage';
@@ -15,6 +16,10 @@ export const router = createBrowserRouter([
   {
     path: ROUTES.SIMULATOR,
     element: <SimulatorPage />,
+  },
+  {
+    path: ROUTES.RESIGNATION_QUIZ,
+    element: <ResignationQuizPage />,
   },
   {
     element: <Layout />,

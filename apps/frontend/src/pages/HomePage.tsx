@@ -9,22 +9,28 @@ const TOOLS = [
     num: '01',
   },
   {
+    title: '퇴사각 테스트',
+    desc: '나의 퇴사 필요도 진단',
+    href: ROUTES.RESIGNATION_QUIZ,
+    num: '02',
+  },
+  {
     title: '연봉 계산기',
     desc: '4대보험, 소득세, 실수령액',
     href: ROUTES.SALARY_CALCULATOR,
-    num: '02',
+    num: '03',
   },
   {
     title: '퇴직연금 계산기',
     desc: 'DB형 vs DC형 비교 분석',
     href: ROUTES.PENSION_CALCULATOR,
-    num: '03',
+    num: '04',
   },
   {
     title: '이직 가이드',
     desc: '단계별 체크리스트',
     href: ROUTES.JOB_GUIDE,
-    num: '04',
+    num: '05',
   },
 ];
 
@@ -34,14 +40,16 @@ export function HomePage() {
       {/* Hero */}
       <section className="flex-1 flex items-center">
         <div className="w-full max-w-6xl mx-auto px-6 py-20">
-          <div className="max-w-2xl">
+          <div className="max-w-3xl">
             <p className="text-sm text-neutral-400 mb-4 tracking-wide">
-              Financial Tools for Workers
+              Finish for Your new Beginning
             </p>
             <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 tracking-tight leading-[1.1] mb-6">
-              복잡한 계산,
+              복잡한 <span className="text-blue-500">마음</span>, 명확한 <span className="text-purple-500">숫자</span>로
               <br />
-              <span className="text-neutral-400">우리가 대신합니다</span>
+              <span className="text-4xl text-neutral-400">
+                고민은 <span className="text-blue-400">우리</span>가, 선택은 <span className="text-purple-400">당신</span>이
+              </span>
             </h1>
             <p className="text-lg text-neutral-500 mb-10 max-w-md">
               퇴사, 이직, 연봉 협상에 필요한 모든 계산을 정확하고 빠르게.

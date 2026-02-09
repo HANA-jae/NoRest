@@ -3,15 +3,17 @@ import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/store/auth.store';
 import { useHistoryStore, SimulationHistoryItem } from '@/store/history.store';
 import { useToast } from '@/components/common/Toast';
+import { useConfirm } from '@/store/confirm.store';
 import { userService } from '@/services/user.service';
 import { formatWon } from '@/utils/calculator';
 import { ROUTES } from '@/router/routes';
 
 const tools = [
   { num: '01', title: '퇴사 시뮬레이터', href: ROUTES.SIMULATOR },
-  { num: '02', title: '연봉 계산기', href: ROUTES.SALARY_CALCULATOR },
-  { num: '03', title: '퇴직연금 계산기', href: ROUTES.PENSION_CALCULATOR },
-  { num: '04', title: '이직 가이드', href: ROUTES.JOB_GUIDE },
+  { num: '02', title: '퇴사각 테스트', href: ROUTES.RESIGNATION_QUIZ },
+  { num: '03', title: '연봉 계산기', href: ROUTES.SALARY_CALCULATOR },
+  { num: '04', title: '퇴직연금 계산기', href: ROUTES.PENSION_CALCULATOR },
+  { num: '05', title: '이직 가이드', href: ROUTES.JOB_GUIDE },
 ];
 
 export function DashboardPage() {
@@ -19,9 +21,23 @@ export function DashboardPage() {
   const setUser = useAuthStore((state) => state.setUser);
   const { simulations, removeSimulation, clearHistory } = useHistoryStore();
   const { success, error } = useToast();
+  const { confirm } = useConfirm();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(user?.name || '');
   const [isSaving, setIsSaving] = useState(false);
+
+  const handleClearHistory = async () => {
+    const confirmed = await confirm({
+      title: '기록 삭제',
+      message: '모든 시뮬레이션 기록을 삭제하시겠습니까?',
+      confirmText: '삭제',
+      variant: 'danger',
+    });
+    if (confirmed) {
+      clearHistory();
+      success('삭제되었습니다.');
+    }
+  };
 
   const handleSave = async () => {
     if (!name.trim() || name.length < 2) {
@@ -118,12 +134,7 @@ export function DashboardPage() {
             <h2 className="text-xs text-neutral-400 uppercase tracking-wider">History</h2>
             {simulations.length > 0 && (
               <button
-                onClick={() => {
-                  if (confirm('삭제하시겠습니까?')) {
-                    clearHistory();
-                    success('삭제되었습니다.');
-                  }
-                }}
+                onClick={handleClearHistory}
                 className="text-xs text-neutral-400 hover:text-neutral-900"
               >
                 Clear

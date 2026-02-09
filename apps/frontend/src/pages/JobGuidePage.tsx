@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useConfirm } from '@/store/confirm.store';
 import { ROUTES } from '@/router/routes';
 
 interface ChecklistItem {
@@ -100,6 +101,7 @@ function saveProgress(items: Set<string>) {
 export function JobGuidePage() {
   const [checkedItems, setCheckedItems] = useState<Set<string>>(loadProgress);
   const [activePhase, setActivePhase] = useState<string>('preparation');
+  const { confirm } = useConfirm();
 
   const handleCheck = (itemId: string) => {
     setCheckedItems((prev) => {
@@ -114,8 +116,14 @@ export function JobGuidePage() {
   const totalItems = phases.reduce((sum, p) => sum + p.items.length, 0);
   const totalProgress = (checkedItems.size / totalItems) * 100;
 
-  const handleReset = () => {
-    if (confirm('초기화하시겠습니까?')) {
+  const handleReset = async () => {
+    const confirmed = await confirm({
+      title: '진행 상황 초기화',
+      message: '모든 체크리스트를 초기화하시겠습니까?',
+      confirmText: '초기화',
+      variant: 'danger',
+    });
+    if (confirmed) {
       setCheckedItems(new Set());
       localStorage.removeItem(STORAGE_KEY);
     }

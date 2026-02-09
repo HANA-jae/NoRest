@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { ToastContainer } from './Toast';
+import { ConfirmModal } from './ConfirmModal';
 
 export function Layout() {
   return (
@@ -12,6 +13,7 @@ export function Layout() {
       </main>
       <Footer />
       <ToastContainer />
+      <ConfirmModal />
     </div>
   );
 }

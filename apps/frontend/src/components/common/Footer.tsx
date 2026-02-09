@@ -7,11 +7,14 @@ export function Footer() {
       <div className="max-w-6xl mx-auto px-6 py-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
           <Link to={ROUTES.HOME} className="font-semibold text-neutral-900">
-            HAN
+            그만둘까
           </Link>
           <nav className="flex items-center gap-6 text-neutral-500">
             <Link to={ROUTES.SIMULATOR} className="hover:text-neutral-900 transition-colors">
               시뮬레이터
+            </Link>
+            <Link to={ROUTES.RESIGNATION_QUIZ} className="hover:text-neutral-900 transition-colors">
+              퇴사각
             </Link>
             <Link to={ROUTES.SALARY_CALCULATOR} className="hover:text-neutral-900 transition-colors">
               연봉
