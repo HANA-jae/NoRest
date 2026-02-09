@@ -1,5 +1,6 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { useSimulatorStore } from '@/store/simulator.store';
+import { useHistoryStore } from '@/store/history.store';
 import { formatWon } from '@/utils/calculator';
 import { ShareableResult } from './ShareableResult';
 
@@ -14,8 +15,24 @@ const GRADE_CONFIG = {
 
 export function Step4Final() {
   const store = useSimulatorStore();
+  const addSimulation = useHistoryStore((state) => state.addSimulation);
   const r = store.results;
   const shareRef = useRef<HTMLDivElement>(null);
+
+  // 시뮬레이션 결과를 히스토리에 저장 (한 번만)
+  useEffect(() => {
+    if (r) {
+      addSimulation({
+        monthlySalary: store.monthlySalary,
+        workingDays: r.workingDays,
+        severancePay: r.severancePay,
+        survivalDays: r.survivalDays,
+        grade: r.grade,
+        percentile: r.percentile,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // 최초 렌더링 시 한 번만 저장
 
   if (!r) return null;
 
