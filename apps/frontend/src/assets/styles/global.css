@@ -1,24 +1,17 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-success-50: #f0fdf4;
-  --color-success-500: #22c55e;
-  --color-success-600: #16a34a;
-
-  --color-warning-50: #fffbeb;
+  --color-success-500: #10b981;
   --color-warning-500: #f59e0b;
-  --color-warning-600: #d97706;
-
-  --color-danger-50: #fef2f2;
   --color-danger-500: #ef4444;
-  --color-danger-600: #dc2626;
 }
 
 @layer base {
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.01em;
   }
 
   #root {
@@ -26,30 +19,23 @@
     display: flex;
     flex-direction: column;
   }
+
+  ::selection {
+    background: #000;
+    color: #fff;
+  }
 }
 
 @layer components {
-  /* Toast Animations */
+  /* Toast */
   @keyframes toast-enter {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+    from { transform: translateY(16px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
   }
 
   @keyframes toast-exit {
-    from {
-      transform: translateX(0);
-      opacity: 1;
-    }
-    to {
-      transform: translateX(100%);
-      opacity: 0;
-    }
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(16px); opacity: 0; }
   }
 
   .toast-enter {
@@ -57,6 +43,17 @@
   }
 
   .toast-exit {
-    animation: toast-exit 0.2s ease-in forwards;
+    animation: toast-exit 0.15s ease-in forwards;
+  }
+
+  /* Modern focus */
+  .focus-ring:focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+  }
+
+  /* Smooth number transition */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 }
