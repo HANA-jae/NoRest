@@ -48,7 +48,7 @@ export function HomePage() {
               복잡한 <span className="text-blue-500">마음</span>, 명확한 <span className="text-purple-500">숫자</span>로
               <br />
               <span className="text-4xl text-neutral-400">
-                고민은 <span className="text-blue-400">우리</span>가, 선택은 <span className="text-purple-400">당신</span>이
+                당신의 <span className="text-blue-400">고민</span>, 우리가 <span className="text-purple-400">정리</span>할게요
               </span>
             </h1>
             <p className="text-lg text-neutral-500 mb-10 max-w-md">
