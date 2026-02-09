@@ -5,142 +5,35 @@ import { ROUTES } from '@/router/routes';
 
 type InputMode = 'annual' | 'monthly';
 
-function ResultCard({
+function ResultRow({
   label,
   value,
-  subValue,
-  accent = false,
-  negative = false,
+  sub,
+  highlight,
 }: {
   label: string;
   value: string;
-  subValue?: string;
-  accent?: boolean;
-  negative?: boolean;
+  sub?: string;
+  highlight?: boolean;
 }) {
   return (
-    <div
-      className={`p-4 rounded-xl ${
-        accent
-          ? 'bg-gradient-to-br from-brand-500 to-brand-600 text-white'
-          : 'bg-neutral-50'
-      }`}
-    >
-      <p className={`text-sm ${accent ? 'text-white/80' : 'text-neutral-500'} mb-1`}>
-        {label}
-      </p>
-      <p
-        className={`text-xl font-bold ${
-          accent ? 'text-white' : negative ? 'text-danger-600' : 'text-neutral-800'
-        }`}
-      >
-        {negative && '-'}{value}
-      </p>
-      {subValue && (
-        <p className={`text-xs mt-1 ${accent ? 'text-white/70' : 'text-neutral-400'}`}>
-          {subValue}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function InsuranceBreakdown({ result }: { result: SalaryResult }) {
-  const items = [
-    { label: '국민연금', value: result.nationalPension, rate: '4.5%' },
-    { label: '건강보험', value: result.healthInsurance, rate: '3.545%' },
-    { label: '장기요양보험', value: result.longTermCare, rate: '건보료의 12.95%' },
-    { label: '고용보험', value: result.employmentInsurance, rate: '0.9%' },
-  ];
-
-  return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm">
-      <h3 className="font-semibold text-neutral-800 mb-4">4대보험 상세 (월)</h3>
-      <div className="space-y-3">
-        {items.map((item) => (
-          <div key={item.label} className="flex items-center justify-between">
-            <div>
-              <span className="text-neutral-700">{item.label}</span>
-              <span className="text-xs text-neutral-400 ml-2">{item.rate}</span>
-            </div>
-            <span className="font-medium text-neutral-800">
-              {formatCurrencyWon(item.value)}
-            </span>
-          </div>
-        ))}
-        <div className="pt-3 border-t border-neutral-200 flex items-center justify-between">
-          <span className="font-medium text-neutral-800">합계</span>
-          <span className="font-bold text-brand-600">
-            {formatCurrencyWon(result.totalInsurance)}
-          </span>
-        </div>
+    <div className="flex justify-between items-center py-3">
+      <span className="text-sm text-neutral-600">{label}</span>
+      <div className="text-right">
+        <span className={`text-sm ${highlight ? 'font-semibold text-neutral-900' : 'text-neutral-900'}`}>
+          {value}
+        </span>
+        {sub && <span className="text-xs text-neutral-400 ml-1">{sub}</span>}
       </div>
     </div>
   );
 }
 
-function TaxBreakdown({ result }: { result: SalaryResult }) {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm">
-      <h3 className="font-semibold text-neutral-800 mb-4">세금 상세 (월)</h3>
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <span className="text-neutral-700">소득세</span>
-          <span className="font-medium text-neutral-800">
-            {formatCurrencyWon(result.incomeTax)}
-          </span>
-        </div>
-        <div className="flex items-center justify-between">
-          <div>
-            <span className="text-neutral-700">지방소득세</span>
-            <span className="text-xs text-neutral-400 ml-2">소득세의 10%</span>
-          </div>
-          <span className="font-medium text-neutral-800">
-            {formatCurrencyWon(result.localIncomeTax)}
-          </span>
-        </div>
-        <div className="pt-3 border-t border-neutral-200 flex items-center justify-between">
-          <span className="font-medium text-neutral-800">합계</span>
-          <span className="font-bold text-danger-600">
-            {formatCurrencyWon(result.totalTax)}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ComparisonBar({ gross, net }: { gross: number; net: number }) {
-  const netPercent = (net / gross) * 100;
-  const deductPercent = 100 - netPercent;
-
-  return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm">
-      <h3 className="font-semibold text-neutral-800 mb-4">급여 구성</h3>
-      <div className="h-8 rounded-full overflow-hidden flex">
-        <div
-          className="bg-gradient-to-r from-brand-500 to-brand-600 flex items-center justify-center text-white text-sm font-medium"
-          style={{ width: `${netPercent}%` }}
-        >
-          {netPercent.toFixed(1)}%
-        </div>
-        <div
-          className="bg-neutral-300 flex items-center justify-center text-neutral-600 text-sm font-medium"
-          style={{ width: `${deductPercent}%` }}
-        >
-          {deductPercent.toFixed(1)}%
-        </div>
-      </div>
-      <div className="flex justify-between mt-3 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-brand-500" />
-          <span className="text-neutral-600">실수령액</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-neutral-300" />
-          <span className="text-neutral-600">공제액</span>
-        </div>
-      </div>
+    <div className="bg-white border border-neutral-200 rounded-xl p-6">
+      <h3 className="text-sm font-medium text-neutral-500 mb-4">{title}</h3>
+      <div className="divide-y divide-neutral-100">{children}</div>
     </div>
   );
 }
@@ -165,44 +58,46 @@ export function SalaryCalculatorPage() {
     setSalaryInput(value);
   };
 
+  const netRatio = result ? ((result.netMonthlySalary / result.monthlySalary) * 100).toFixed(1) : '0';
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 page-enter">
+    <div className="max-w-2xl mx-auto px-6 py-12">
       {/* Header */}
       <div className="mb-8">
         <Link
           to={ROUTES.HOME}
-          className="inline-flex items-center gap-1 text-neutral-500 hover:text-neutral-700 mb-4"
+          className="text-sm text-neutral-500 hover:text-neutral-700 mb-4 inline-block"
         >
-          ← 홈으로
+          ← 홈
         </Link>
-        <h1 className="text-3xl font-bold text-neutral-800">연봉 계산기</h1>
-        <p className="text-neutral-500 mt-2">
-          연봉 또는 월급을 입력하면 4대보험과 세금을 제외한 실수령액을 계산합니다.
+        <h1 className="text-xl font-bold text-neutral-900">연봉 계산기</h1>
+        <p className="text-sm text-neutral-500 mt-1">
+          4대보험과 세금을 제외한 실수령액을 계산합니다.
         </p>
       </div>
 
-      {/* Input Section */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
+      {/* Input */}
+      <div className="bg-white border border-neutral-200 rounded-xl p-6 mb-6">
         <div className="flex gap-2 mb-4">
           <button
             onClick={() => setInputMode('annual')}
-            className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
+            className={`flex-1 py-2 text-sm rounded-lg transition-colors ${
               inputMode === 'annual'
-                ? 'bg-brand-600 text-white'
+                ? 'bg-neutral-900 text-white'
                 : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
             }`}
           >
-            연봉 입력
+            연봉
           </button>
           <button
             onClick={() => setInputMode('monthly')}
-            className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
+            className={`flex-1 py-2 text-sm rounded-lg transition-colors ${
               inputMode === 'monthly'
-                ? 'bg-brand-600 text-white'
+                ? 'bg-neutral-900 text-white'
                 : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
             }`}
           >
-            월급 입력
+            월급
           </button>
         </div>
 
@@ -211,94 +106,60 @@ export function SalaryCalculatorPage() {
             type="text"
             value={formatCurrency(salary)}
             onChange={handleInputChange}
-            placeholder={inputMode === 'annual' ? '연봉을 입력하세요' : '월급을 입력하세요'}
-            className="w-full text-3xl font-bold text-neutral-800 bg-neutral-50 rounded-xl px-4 py-4 pr-12 focus:outline-none focus:ring-2 focus:ring-brand-500"
+            placeholder="금액을 입력하세요"
+            className="w-full text-2xl font-semibold text-neutral-900 bg-neutral-50 rounded-lg px-4 py-4 pr-12 focus:outline-none focus:ring-2 focus:ring-neutral-300"
           />
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-neutral-400">
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400">
             원
           </span>
         </div>
-
-        {salary > 0 && (
-          <p className="text-sm text-neutral-500 mt-2">
-            {inputMode === 'annual'
-              ? `월 ${formatCurrencyWon(salary / 12)}`
-              : `연 ${formatCurrencyWon(salary * 12)}`}
-          </p>
-        )}
       </div>
 
       {/* Results */}
       {result && (
-        <>
+        <div className="space-y-4">
           {/* Summary */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <ResultCard
-              label="월 실수령액"
-              value={formatCurrencyWon(result.netMonthlySalary)}
-              subValue={`연 ${formatCurrencyWon(result.netAnnualSalary)}`}
-              accent
-            />
-            <ResultCard
-              label="월 공제액"
-              value={formatCurrencyWon(result.totalDeduction)}
-              subValue={`연 ${formatCurrencyWon(result.annualDeduction)}`}
-              negative
-            />
-            <ResultCard
-              label="실수령 비율"
-              value={`${((result.netMonthlySalary / result.monthlySalary) * 100).toFixed(1)}%`}
-              subValue="세전 대비"
-            />
-          </div>
-
-          {/* Comparison Bar */}
-          <div className="mb-6">
-            <ComparisonBar gross={result.monthlySalary} net={result.netMonthlySalary} />
-          </div>
-
-          {/* Breakdown */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <InsuranceBreakdown result={result} />
-            <TaxBreakdown result={result} />
-          </div>
-
-          {/* Annual Summary */}
-          <div className="bg-neutral-800 rounded-2xl p-6 text-white">
-            <h3 className="font-semibold mb-4">연간 요약</h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <div>
-                <p className="text-2xl font-bold">{formatCurrency(result.annualSalary)}</p>
-                <p className="text-sm text-neutral-400">연봉</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-brand-400">
-                  {formatCurrency(result.netAnnualSalary)}
-                </p>
-                <p className="text-sm text-neutral-400">실수령액</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-yellow-400">
-                  {formatCurrency(result.annualInsurance)}
-                </p>
-                <p className="text-sm text-neutral-400">4대보험</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-red-400">
-                  {formatCurrency(result.annualTax)}
-                </p>
-                <p className="text-sm text-neutral-400">세금</p>
-              </div>
+          <div className="bg-neutral-900 text-white rounded-xl p-6">
+            <p className="text-sm text-neutral-400 mb-1">월 실수령액</p>
+            <p className="text-3xl font-bold">{formatCurrencyWon(result.netMonthlySalary)}</p>
+            <div className="flex gap-4 mt-4 text-sm">
+              <span className="text-neutral-400">
+                연 {formatCurrency(result.netAnnualSalary)}원
+              </span>
+              <span className="text-neutral-400">
+                실수령률 {netRatio}%
+              </span>
             </div>
           </div>
-        </>
+
+          {/* Insurance */}
+          <Section title="4대보험 (월)">
+            <ResultRow label="국민연금" value={formatCurrencyWon(result.nationalPension)} sub="4.5%" />
+            <ResultRow label="건강보험" value={formatCurrencyWon(result.healthInsurance)} sub="3.545%" />
+            <ResultRow label="장기요양보험" value={formatCurrencyWon(result.longTermCare)} />
+            <ResultRow label="고용보험" value={formatCurrencyWon(result.employmentInsurance)} sub="0.9%" />
+            <ResultRow label="합계" value={formatCurrencyWon(result.totalInsurance)} highlight />
+          </Section>
+
+          {/* Tax */}
+          <Section title="세금 (월)">
+            <ResultRow label="소득세" value={formatCurrencyWon(result.incomeTax)} />
+            <ResultRow label="지방소득세" value={formatCurrencyWon(result.localIncomeTax)} sub="소득세의 10%" />
+            <ResultRow label="합계" value={formatCurrencyWon(result.totalTax)} highlight />
+          </Section>
+
+          {/* Total */}
+          <Section title="요약">
+            <ResultRow label="세전 월급" value={formatCurrencyWon(result.monthlySalary)} />
+            <ResultRow label="총 공제액" value={`-${formatCurrencyWon(result.totalDeduction)}`} />
+            <ResultRow label="실수령액" value={formatCurrencyWon(result.netMonthlySalary)} highlight />
+          </Section>
+        </div>
       )}
 
       {/* Disclaimer */}
       <p className="text-xs text-neutral-400 text-center mt-8">
-        * 본 계산기는 2024년 기준 간이세액표를 참고하여 만들어졌으며, 실제 급여와 다를 수 있습니다.
-        <br />
-        정확한 금액은 회사 급여명세서 또는 국세청 간이세액표를 확인해주세요.
+        2024년 기준 간이세액표를 참고하여 계산되었습니다. 실제 금액과 다를 수 있습니다.
       </p>
     </div>
   );

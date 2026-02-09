@@ -5,172 +5,25 @@ import {
   formatMillion,
   formatFullCurrency,
   PensionType,
-  PensionResult,
 } from '@/utils/pension-calculator';
 import { ROUTES } from '@/router/routes';
 
-function PensionTypeCard({
-  type,
-  selected,
-  onClick,
-  title,
-  description,
-}: {
-  type: PensionType;
-  selected: boolean;
-  onClick: () => void;
-  title: string;
-  description: string;
-}) {
+function ResultRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <button
-      onClick={onClick}
-      className={`p-4 rounded-xl border-2 text-left transition-all ${
-        selected
-          ? 'border-brand-500 bg-brand-50'
-          : 'border-neutral-200 hover:border-neutral-300'
-      }`}
-    >
-      <div className="flex items-center gap-3">
-        <div
-          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-            selected ? 'border-brand-500' : 'border-neutral-300'
-          }`}
-        >
-          {selected && <div className="w-3 h-3 rounded-full bg-brand-500" />}
-        </div>
-        <div>
-          <h3 className={`font-semibold ${selected ? 'text-brand-700' : 'text-neutral-700'}`}>
-            {title}
-          </h3>
-          <p className="text-sm text-neutral-500">{description}</p>
-        </div>
-      </div>
-    </button>
-  );
-}
-
-function ComparisonChart({ result }: { result: PensionResult }) {
-  const maxValue = Math.max(result.dbEstimate, result.dcEstimate);
-  const dbPercent = (result.dbEstimate / maxValue) * 100;
-  const dcPercent = (result.dcEstimate / maxValue) * 100;
-
-  return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm">
-      <h3 className="font-semibold text-neutral-800 mb-6">DB vs DC 비교</h3>
-
-      <div className="space-y-6">
-        {/* DB Bar */}
-        <div>
-          <div className="flex justify-between mb-2">
-            <span className="font-medium text-neutral-700">DB형 (확정급여형)</span>
-            <span className="font-bold text-neutral-800">{formatMillion(result.dbEstimate)}원</span>
-          </div>
-          <div className="h-10 bg-neutral-100 rounded-lg overflow-hidden">
-            <div
-              className={`h-full rounded-lg flex items-center justify-end pr-3 ${
-                result.betterOption === 'DB'
-                  ? 'bg-gradient-to-r from-emerald-400 to-emerald-500'
-                  : 'bg-gradient-to-r from-blue-400 to-blue-500'
-              }`}
-              style={{ width: `${dbPercent}%` }}
-            >
-              <span className="text-white text-sm font-medium">
-                {formatFullCurrency(result.dbEstimate)}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* DC Bar */}
-        <div>
-          <div className="flex justify-between mb-2">
-            <span className="font-medium text-neutral-700">DC형 (확정기여형)</span>
-            <span className="font-bold text-neutral-800">{formatMillion(result.dcEstimate)}원</span>
-          </div>
-          <div className="h-10 bg-neutral-100 rounded-lg overflow-hidden">
-            <div
-              className={`h-full rounded-lg flex items-center justify-end pr-3 ${
-                result.betterOption === 'DC'
-                  ? 'bg-gradient-to-r from-emerald-400 to-emerald-500'
-                  : 'bg-gradient-to-r from-violet-400 to-violet-500'
-              }`}
-              style={{ width: `${dcPercent}%` }}
-            >
-              <span className="text-white text-sm font-medium">
-                {formatFullCurrency(result.dcEstimate)}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Difference */}
-      <div className="mt-6 p-4 bg-neutral-50 rounded-xl">
-        <div className="flex items-center justify-between">
-          <span className="text-neutral-600">차이</span>
-          <span
-            className={`font-bold ${
-              result.difference > 0 ? 'text-blue-600' : result.difference < 0 ? 'text-violet-600' : 'text-neutral-600'
-            }`}
-          >
-            {result.difference > 0 ? 'DB가 ' : result.difference < 0 ? 'DC가 ' : ''}
-            {result.difference !== 0 && formatMillion(Math.abs(result.difference)) + '원 유리'}
-            {result.difference === 0 && '동일'}
-          </span>
-        </div>
-      </div>
+    <div className="flex justify-between items-center py-3">
+      <span className="text-sm text-neutral-600">{label}</span>
+      <span className={`text-sm ${highlight ? 'font-semibold text-neutral-900' : 'text-neutral-900'}`}>
+        {value}
+      </span>
     </div>
   );
 }
 
-function ResultSummary({ result }: { result: PensionResult }) {
-  const isDB = result.pensionType === 'DB';
-  const estimate = isDB ? result.dbEstimate : result.dcEstimate;
-  const monthlyPension = isDB ? result.dbMonthlyPension : result.dcMonthlyPension;
-
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-gradient-to-br from-brand-600 to-accent-600 rounded-2xl p-6 text-white">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold opacity-90">
-          {isDB ? 'DB형' : 'DC형'} 예상 퇴직연금
-        </h3>
-        <span className="px-3 py-1 bg-white/20 rounded-full text-sm">
-          {result.yearsOfService}년 근속
-        </span>
-      </div>
-
-      <div className="text-4xl font-bold mb-2">{formatMillion(estimate)}원</div>
-      <p className="text-white/70 text-sm">{formatFullCurrency(estimate)}</p>
-
-      <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-white/20">
-        <div>
-          <p className="text-white/70 text-sm">월 연금 수령액</p>
-          <p className="text-xl font-bold">{formatMillion(monthlyPension)}원</p>
-          <p className="text-xs text-white/50">{result.pensionYears}년 분할 수령 시</p>
-        </div>
-        <div>
-          <p className="text-white/70 text-sm">총 납입금액</p>
-          <p className="text-xl font-bold">{formatMillion(result.totalContributions)}원</p>
-          <p className="text-xs text-white/50">근속기간 합산</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function InfoCard({ title, items }: { title: string; items: { label: string; value: string }[] }) {
-  return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm">
-      <h3 className="font-semibold text-neutral-800 mb-4">{title}</h3>
-      <div className="space-y-3">
-        {items.map((item, index) => (
-          <div key={index} className="flex justify-between">
-            <span className="text-neutral-600">{item.label}</span>
-            <span className="font-medium text-neutral-800">{item.value}</span>
-          </div>
-        ))}
-      </div>
+    <div className="bg-white border border-neutral-200 rounded-xl p-6">
+      <h3 className="text-sm font-medium text-neutral-500 mb-4">{title}</h3>
+      <div className="divide-y divide-neutral-100">{children}</div>
     </div>
   );
 }
@@ -197,47 +50,39 @@ export function PensionCalculatorPage() {
     new Intl.NumberFormat('ko-KR').format(value);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 page-enter">
+    <div className="max-w-2xl mx-auto px-6 py-12">
       {/* Header */}
       <div className="mb-8">
         <Link
           to={ROUTES.HOME}
-          className="inline-flex items-center gap-1 text-neutral-500 hover:text-neutral-700 mb-4"
+          className="text-sm text-neutral-500 hover:text-neutral-700 mb-4 inline-block"
         >
-          ← 홈으로
+          ← 홈
         </Link>
-        <h1 className="text-3xl font-bold text-neutral-800">퇴직연금 계산기</h1>
-        <p className="text-neutral-500 mt-2">
-          DB형과 DC형 퇴직연금을 비교하고 예상 수령액을 계산합니다.
+        <h1 className="text-xl font-bold text-neutral-900">퇴직연금 계산기</h1>
+        <p className="text-sm text-neutral-500 mt-1">
+          DB형과 DC형 퇴직연금을 비교합니다.
         </p>
       </div>
 
-      {/* Input Section */}
-      <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Monthly Salary */}
+      {/* Input */}
+      <div className="bg-white border border-neutral-200 rounded-xl p-6 mb-6 space-y-6">
+        {/* Salary & Years */}
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              월급 (세전)
-            </label>
+            <label className="block text-sm text-neutral-600 mb-2">월급 (세전)</label>
             <div className="relative">
               <input
                 type="text"
                 value={formatInputCurrency(salary)}
                 onChange={(e) => setMonthlySalary(e.target.value.replace(/[^0-9]/g, ''))}
-                className="w-full text-xl font-bold text-neutral-800 bg-neutral-50 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full text-lg font-semibold bg-neutral-50 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-neutral-300"
               />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400">
-                원
-              </span>
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-neutral-400">원</span>
             </div>
           </div>
-
-          {/* Years of Service */}
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              예상 근속 기간
-            </label>
+            <label className="block text-sm text-neutral-600 mb-2">예상 근속 기간</label>
             <div className="relative">
               <input
                 type="number"
@@ -245,115 +90,131 @@ export function PensionCalculatorPage() {
                 max={40}
                 value={yearsOfService}
                 onChange={(e) => setYearsOfService(parseInt(e.target.value, 10) || 1)}
-                className="w-full text-xl font-bold text-neutral-800 bg-neutral-50 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-brand-500"
+                className="w-full text-lg font-semibold bg-neutral-50 rounded-lg px-4 py-3 pr-10 focus:outline-none focus:ring-2 focus:ring-neutral-300"
               />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400">
-                년
-              </span>
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-neutral-400">년</span>
             </div>
           </div>
         </div>
 
         {/* Pension Type */}
-        <div className="mt-6">
-          <label className="block text-sm font-medium text-neutral-700 mb-3">
-            연금 유형 선택
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <PensionTypeCard
-              type="DB"
-              selected={pensionType === 'DB'}
+        <div>
+          <label className="block text-sm text-neutral-600 mb-2">연금 유형</label>
+          <div className="grid grid-cols-2 gap-2">
+            <button
               onClick={() => setPensionType('DB')}
-              title="DB형 (확정급여형)"
-              description="퇴직 시 평균임금 기준 계산"
-            />
-            <PensionTypeCard
-              type="DC"
-              selected={pensionType === 'DC'}
+              className={`py-3 text-sm rounded-lg border transition-colors ${
+                pensionType === 'DB'
+                  ? 'border-neutral-900 bg-neutral-900 text-white'
+                  : 'border-neutral-200 text-neutral-600 hover:border-neutral-300'
+              }`}
+            >
+              <span className="font-medium">DB형</span>
+              <span className="block text-xs opacity-70 mt-0.5">확정급여형</span>
+            </button>
+            <button
               onClick={() => setPensionType('DC')}
-              title="DC형 (확정기여형)"
-              description="매년 적립 후 운용 수익 반영"
-            />
+              className={`py-3 text-sm rounded-lg border transition-colors ${
+                pensionType === 'DC'
+                  ? 'border-neutral-900 bg-neutral-900 text-white'
+                  : 'border-neutral-200 text-neutral-600 hover:border-neutral-300'
+              }`}
+            >
+              <span className="font-medium">DC형</span>
+              <span className="block text-xs opacity-70 mt-0.5">확정기여형</span>
+            </button>
           </div>
         </div>
 
         {/* Return Rate (DC only) */}
         {pensionType === 'DC' && (
-          <div className="mt-6">
-            <label className="block text-sm font-medium text-neutral-700 mb-2">
-              예상 연 수익률
-            </label>
-            <div className="flex items-center gap-4">
-              <input
-                type="range"
-                min={0}
-                max={10}
-                step={0.5}
-                value={returnRate}
-                onChange={(e) => setReturnRate(parseFloat(e.target.value))}
-                className="flex-1 h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer"
-              />
-              <span className="text-lg font-bold text-brand-600 w-16 text-right">
-                {returnRate}%
-              </span>
+          <div>
+            <div className="flex justify-between items-center mb-2">
+              <label className="text-sm text-neutral-600">예상 연 수익률</label>
+              <span className="text-sm font-semibold text-neutral-900">{returnRate}%</span>
             </div>
-            <p className="text-xs text-neutral-400 mt-2">
-              * 수익률은 가정이며, 실제 운용 결과에 따라 달라질 수 있습니다.
-            </p>
+            <input
+              type="range"
+              min={0}
+              max={10}
+              step={0.5}
+              value={returnRate}
+              onChange={(e) => setReturnRate(parseFloat(e.target.value))}
+              className="w-full h-2 bg-neutral-200 rounded-lg appearance-none cursor-pointer"
+            />
           </div>
         )}
       </div>
 
       {/* Results */}
       {result && (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <ResultSummary result={result} />
-            <ComparisonChart result={result} />
+        <div className="space-y-4">
+          {/* Summary */}
+          <div className="bg-neutral-900 text-white rounded-xl p-6">
+            <p className="text-sm text-neutral-400 mb-1">
+              {pensionType === 'DB' ? 'DB형' : 'DC형'} 예상 퇴직연금
+            </p>
+            <p className="text-3xl font-bold">
+              {formatMillion(pensionType === 'DB' ? result.dbEstimate : result.dcEstimate)}원
+            </p>
+            <p className="text-sm text-neutral-400 mt-2">
+              월 연금: {formatFullCurrency(pensionType === 'DB' ? result.dbMonthlyPension : result.dcMonthlyPension)}
+              <span className="text-neutral-500"> (10년 분할)</span>
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <InfoCard
-              title="DB형 상세"
-              items={[
-                { label: '예상 퇴직금', value: formatFullCurrency(result.dbEstimate) },
-                { label: '월 연금 수령액', value: formatFullCurrency(result.dbMonthlyPension) },
-                { label: '계산 방식', value: '평균임금 × 근속연수' },
-              ]}
-            />
-            <InfoCard
-              title="DC형 상세"
-              items={[
-                { label: '예상 적립금', value: formatFullCurrency(result.dcEstimate) },
-                { label: '월 연금 수령액', value: formatFullCurrency(result.dcMonthlyPension) },
-                { label: '월 납입금', value: formatFullCurrency(result.dcContributionMonthly) },
-              ]}
-            />
-          </div>
-
-          {/* Recommendation */}
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
-            <div className="flex items-start gap-4">
-              <div className="text-3xl">💡</div>
+          {/* Comparison */}
+          <div className="bg-white border border-neutral-200 rounded-xl p-6">
+            <h3 className="text-sm font-medium text-neutral-500 mb-4">DB vs DC 비교</h3>
+            <div className="space-y-4">
               <div>
-                <h3 className="font-semibold text-amber-800 mb-2">선택 가이드</h3>
-                <ul className="text-sm text-amber-700 space-y-1">
-                  <li>
-                    <strong>DB형이 유리한 경우:</strong> 임금 상승률이 높을 것으로 예상되는 경우, 장기 근속 예정인 경우
-                  </li>
-                  <li>
-                    <strong>DC형이 유리한 경우:</strong> 투자에 자신 있는 경우, 이직이 잦은 경우, 임금 상승률이 낮은 경우
-                  </li>
-                </ul>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-neutral-600">DB형 (확정급여형)</span>
+                  <span className="font-medium text-neutral-900">{formatFullCurrency(result.dbEstimate)}</span>
+                </div>
+                <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-neutral-700 rounded-full"
+                    style={{ width: `${(result.dbEstimate / Math.max(result.dbEstimate, result.dcEstimate)) * 100}%` }}
+                  />
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between text-sm mb-2">
+                  <span className="text-neutral-600">DC형 (확정기여형)</span>
+                  <span className="font-medium text-neutral-900">{formatFullCurrency(result.dcEstimate)}</span>
+                </div>
+                <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-neutral-400 rounded-full"
+                    style={{ width: `${(result.dcEstimate / Math.max(result.dbEstimate, result.dcEstimate)) * 100}%` }}
+                  />
+                </div>
+              </div>
+              <div className="pt-4 border-t border-neutral-100">
+                <p className="text-sm text-neutral-600">
+                  {result.difference > 0
+                    ? `DB형이 ${formatMillion(result.difference)}원 더 유리합니다.`
+                    : result.difference < 0
+                      ? `DC형이 ${formatMillion(Math.abs(result.difference))}원 더 유리합니다.`
+                      : '두 유형의 예상 금액이 비슷합니다.'}
+                </p>
               </div>
             </div>
           </div>
-        </>
+
+          {/* Details */}
+          <Section title="상세 정보">
+            <ResultRow label="근속 기간" value={`${result.yearsOfService}년`} />
+            <ResultRow label="총 납입금" value={formatFullCurrency(result.totalContributions)} />
+            <ResultRow label="연금 수령 기간" value={`${result.pensionYears}년`} />
+          </Section>
+        </div>
       )}
 
       {/* Disclaimer */}
       <p className="text-xs text-neutral-400 text-center mt-8">
-        * 본 계산기는 참고용이며, 실제 퇴직연금 수령액은 회사 규정 및 운용 결과에 따라 달라질 수 있습니다.
+        계산 결과는 참고용이며 실제 수령액은 회사 규정 및 운용 결과에 따라 달라질 수 있습니다.
       </p>
     </div>
   );
