@@ -1,11 +1,12 @@
+'use client';
+
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { calculateSalary, formatCurrency, formatCurrencyWon } from '@/utils/salary-calculator';
-import { ROUTES } from '@/router/routes';
 
 type InputMode = 'annual' | 'monthly';
 
-export function SalaryCalculatorPage() {
+export default function SalaryCalculatorPage() {
   const [inputMode, setInputMode] = useState<InputMode>('annual');
   const [salaryInput, setSalaryInput] = useState<string>('50000000');
 
@@ -29,7 +30,7 @@ export function SalaryCalculatorPage() {
     <div className="max-w-5xl mx-auto px-6 py-16">
       {/* Header */}
       <Link
-        to={ROUTES.HOME}
+        href="/"
         className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-neutral-900 mb-12 transition-colors"
       >
         <span>←</span>

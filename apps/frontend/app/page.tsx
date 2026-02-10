@@ -1,40 +1,39 @@
-import { Link } from 'react-router-dom';
-import { ROUTES } from '@/router/routes';
+import Link from 'next/link';
 
 const TOOLS = [
   {
     title: '퇴사 시뮬레이터',
     desc: '퇴직금, 실업급여, 생존 기간',
-    href: ROUTES.SIMULATOR,
+    href: '/simulator',
     num: '01',
   },
   {
     title: '퇴사각 테스트',
     desc: '나의 퇴사 필요도 진단',
-    href: ROUTES.RESIGNATION_QUIZ,
+    href: '/resignation-quiz',
     num: '02',
   },
   {
     title: '연봉 계산기',
     desc: '4대보험, 소득세, 실수령액',
-    href: ROUTES.SALARY_CALCULATOR,
+    href: '/salary-calculator',
     num: '03',
   },
   {
     title: '퇴직연금 계산기',
     desc: 'DB형 vs DC형 비교 분석',
-    href: ROUTES.PENSION_CALCULATOR,
+    href: '/pension-calculator',
     num: '04',
   },
   {
     title: '이직 가이드',
     desc: '단계별 체크리스트',
-    href: ROUTES.JOB_GUIDE,
+    href: '/job-guide',
     num: '05',
   },
 ];
 
-export function HomePage() {
+export default function HomePage() {
   return (
     <div className="min-h-[80vh] flex flex-col">
       {/* Hero */}
@@ -55,7 +54,7 @@ export function HomePage() {
               퇴사, 이직, 연봉 협상에 필요한 모든 계산을 정확하고 빠르게.
             </p>
             <Link
-              to={ROUTES.SIMULATOR}
+              href="/simulator"
               className="inline-flex items-center gap-3 px-6 py-3.5 bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-colors"
             >
               <span>시작하기</span>
@@ -68,10 +67,10 @@ export function HomePage() {
       {/* Tools */}
       <section className="border-t border-neutral-200">
         <div className="max-w-6xl mx-auto">
-          {TOOLS.map((tool, i) => (
+          {TOOLS.map((tool) => (
             <Link
               key={tool.href}
-              to={tool.href}
+              href={tool.href}
               className="group flex items-center justify-between px-6 py-6 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
             >
               <div className="flex items-center gap-8">

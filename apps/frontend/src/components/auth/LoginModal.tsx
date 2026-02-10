@@ -1,8 +1,9 @@
+'use client';
+
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { useUiStore } from '@/store/ui.store';
-import { ROUTES } from '@/router/routes';
 
 export function LoginModal() {
   const [email, setEmail] = useState('');
@@ -104,7 +105,7 @@ export function LoginModal() {
         <p className="mt-6 text-center text-sm text-neutral-400">
           계정이 없으신가요?{' '}
           <Link
-            to={ROUTES.REGISTER}
+            href="/register"
             onClick={closeLoginModal}
             className="text-neutral-900 font-medium hover:underline"
           >

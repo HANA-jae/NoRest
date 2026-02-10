@@ -1,4 +1,4 @@
 export const env = {
-  apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
-  appTitle: import.meta.env.VITE_APP_TITLE || 'HAN',
+  apiUrl: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api',
+  appTitle: process.env.NEXT_PUBLIC_APP_TITLE || 'HAN',
 };

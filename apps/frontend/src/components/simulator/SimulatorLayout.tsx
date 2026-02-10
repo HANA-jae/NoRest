@@ -1,4 +1,7 @@
+'use client';
+
 import type { ReactNode } from 'react';
+import Link from 'next/link';
 import { StepIndicator } from './StepIndicator';
 
 interface Props {
@@ -11,9 +14,9 @@ export function SimulatorLayout({ children }: Props) {
       {/* 상단 헤더 */}
       <header className="border-b border-neutral-200 bg-white">
         <div className="max-w-2xl mx-auto px-6 py-6">
-          <a href="/" className="text-neutral-400 text-sm hover:text-neutral-600 transition-colors no-underline">
-            &larr; 돌아가기
-          </a>
+          <Link href="/" className="text-neutral-400 text-sm hover:text-neutral-600 transition-colors no-underline">
+            ← 돌아가기
+          </Link>
           <h1 className="mt-3 text-2xl font-bold text-neutral-900 tracking-tight">
             퇴사 시뮬레이터
           </h1>

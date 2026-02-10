@@ -1,6 +1,8 @@
+'use client';
+
 import { ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ROUTES } from '@/router/routes';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useQuizStore } from '@/store/quiz.store';
 import { useConfirm } from '@/store/confirm.store';
 import { ConfirmModal } from '@/components/common/ConfirmModal';
@@ -12,7 +14,7 @@ interface QuizLayoutProps {
 export function QuizLayout({ children }: QuizLayoutProps) {
   const { phase, reset } = useQuizStore();
   const { confirm } = useConfirm();
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const handleExit = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -26,10 +28,10 @@ export function QuizLayout({ children }: QuizLayoutProps) {
       });
       if (confirmed) {
         reset();
-        navigate(ROUTES.HOME);
+        router.push('/');
       }
     } else {
-      navigate(ROUTES.HOME);
+      router.push('/');
     }
   };
 
@@ -38,7 +40,7 @@ export function QuizLayout({ children }: QuizLayoutProps) {
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-neutral-100">
         <div className="max-w-3xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link
-            to={ROUTES.HOME}
+            href="/"
             onClick={handleExit}
             className="text-sm text-neutral-400 hover:text-neutral-900 transition-colors"
           >

@@ -1,7 +1,6 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useQuizStore } from '@/store/quiz.store';
 import { CATEGORIES, CategoryId } from '@/utils/quiz-data';
-import { ROUTES } from '@/router/routes';
 
 export function QuizResult() {
   const { getResult, reset } = useQuizStore();
@@ -80,7 +79,7 @@ export function QuizResult() {
             다시 테스트하기
           </button>
           <Link
-            to={ROUTES.SIMULATOR}
+            href="/simulator"
             className="flex-1 py-4 px-6 bg-white text-neutral-900 border border-neutral-200 rounded-full font-medium text-center hover:bg-neutral-50 transition-colors"
           >
             퇴사 시뮬레이터 →

@@ -1,14 +1,15 @@
+'use client';
+
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import {
   calculatePension,
   formatMillion,
   formatFullCurrency,
   PensionType,
 } from '@/utils/pension-calculator';
-import { ROUTES } from '@/router/routes';
 
-export function PensionCalculatorPage() {
+export default function PensionCalculatorPage() {
   const [monthlySalary, setMonthlySalary] = useState<string>('3500000');
   const [yearsOfService, setYearsOfService] = useState<number>(10);
   const [pensionType, setPensionType] = useState<PensionType>('DB');
@@ -32,7 +33,7 @@ export function PensionCalculatorPage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-16">
       <Link
-        to={ROUTES.HOME}
+        href="/"
         className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-neutral-900 mb-12 transition-colors"
       >
         <span>←</span>

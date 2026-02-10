@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
 import { useAuth } from '@/hooks/useAuth';
 import { LoginModal } from '@/components/auth/LoginModal';
-import { ROUTES } from '@/router/routes';
 
 export function Header() {
   const { isAuthenticated, user } = useAuthStore();
@@ -15,7 +16,7 @@ export function Header() {
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-neutral-100">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link
-            to={ROUTES.HOME}
+            href="/"
             className="text-xl font-bold text-neutral-900 tracking-tight"
           >
             그만둘까
@@ -25,7 +26,7 @@ export function Header() {
             {isAuthenticated ? (
               <>
                 <Link
-                  to={ROUTES.DASHBOARD}
+                  href="/dashboard"
                   className="text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
                 >
                   {user?.name}
@@ -46,7 +47,7 @@ export function Header() {
                   로그인
                 </button>
                 <Link
-                  to={ROUTES.REGISTER}
+                  href="/register"
                   className="text-sm px-5 py-2 bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-colors"
                 >
                   시작하기

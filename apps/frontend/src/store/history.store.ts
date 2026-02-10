@@ -47,6 +47,7 @@ export const useHistoryStore = create<HistoryState>()(
     }),
     {
       name: 'han-simulation-history',
+      skipHydration: true,
     }
   )
 );

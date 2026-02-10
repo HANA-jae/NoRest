@@ -1,3 +1,5 @@
+'use client';
+
 import { SimulatorLayout } from '@/components/simulator/SimulatorLayout';
 import { Step1BasicInfo } from '@/components/simulator/Step1BasicInfo';
 import { Step2Results } from '@/components/simulator/Step2Results';
@@ -5,7 +7,7 @@ import { Step3Simulation } from '@/components/simulator/Step3Simulation';
 import { Step4Final } from '@/components/simulator/Step4Final';
 import { useSimulatorStore } from '@/store/simulator.store';
 
-export function SimulatorPage() {
+export default function SimulatorPage() {
   const currentStep = useSimulatorStore((s) => s.currentStep);
 
   return (

@@ -1,14 +1,15 @@
-import { useNavigate } from 'react-router-dom';
+'use client';
+
+import { useRouter } from 'next/navigation';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { useUiStore } from '@/store/ui.store';
-import { ROUTES } from '@/router/routes';
 
-export function RegisterPage() {
-  const navigate = useNavigate();
+export default function RegisterPage() {
+  const router = useRouter();
   const { openLoginModal } = useUiStore();
 
   const handleLoginClick = () => {
-    navigate(ROUTES.HOME);
+    router.push('/');
     openLoginModal();
   };
 

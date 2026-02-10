@@ -1,7 +1,8 @@
+'use client';
+
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useConfirm } from '@/store/confirm.store';
-import { ROUTES } from '@/router/routes';
 
 interface ChecklistItem {
   id: string;
@@ -87,6 +88,7 @@ const phases: Phase[] = [
 const STORAGE_KEY = 'han-job-guide-progress';
 
 function loadProgress(): Set<string> {
+  if (typeof window === 'undefined') return new Set();
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) return new Set(JSON.parse(saved));
@@ -98,8 +100,8 @@ function saveProgress(items: Set<string>) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify([...items]));
 }
 
-export function JobGuidePage() {
-  const [checkedItems, setCheckedItems] = useState<Set<string>>(loadProgress);
+export default function JobGuidePage() {
+  const [checkedItems, setCheckedItems] = useState<Set<string>>(() => loadProgress());
   const [activePhase, setActivePhase] = useState<string>('preparation');
   const { confirm } = useConfirm();
 
@@ -135,7 +137,7 @@ export function JobGuidePage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-16">
       <Link
-        to={ROUTES.HOME}
+        href="/"
         className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-neutral-900 mb-12 transition-colors"
       >
         <span>←</span>

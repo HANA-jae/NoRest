@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect } from 'react';
 import { QuizLayout } from '@/components/quiz/QuizLayout';
 import { QuizIntro } from '@/components/quiz/QuizIntro';
@@ -7,7 +9,7 @@ import { QuizResult } from '@/components/quiz/QuizResult';
 import { useQuizStore } from '@/store/quiz.store';
 import { QUESTIONS } from '@/utils/quiz-data';
 
-export function ResignationQuizPage() {
+export default function ResignationQuizPage() {
   const { phase, currentQuestion, answers, reset } = useQuizStore();
 
   useEffect(() => {

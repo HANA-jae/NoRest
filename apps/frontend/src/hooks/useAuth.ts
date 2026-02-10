@@ -1,13 +1,12 @@
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
 import { authService } from '@/services/auth.service';
 import type { LoginPayload, RegisterPayload } from '@han/shared';
-import { ROUTES } from '@/router/routes';
 
 export function useAuth() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { login: storeLogin, logout: storeLogout, refreshToken } = useAuthStore();
   const { setLoading, setError, clearError } = useUiStore();
 
@@ -21,7 +20,7 @@ export function useAuth() {
         const response = await authService.login(payload);
         storeLogin(response.user, response.accessToken, response.refreshToken);
         closeLoginModal();
-        navigate(ROUTES.DASHBOARD);
+        router.push('/dashboard');
       } catch (err: unknown) {
         const message =
           err instanceof Error ? err.message : '로그인에 실패했습니다';
@@ -31,7 +30,7 @@ export function useAuth() {
         setLoading(false);
       }
     },
-    [storeLogin, navigate, setLoading, setError, clearError, closeLoginModal],
+    [storeLogin, router, setLoading, setError, clearError, closeLoginModal],
   );
 
   const register = useCallback(
@@ -41,7 +40,7 @@ export function useAuth() {
       try {
         const response = await authService.register(payload);
         storeLogin(response.user, response.accessToken, response.refreshToken);
-        navigate(ROUTES.DASHBOARD);
+        router.push('/dashboard');
       } catch (err: unknown) {
         const message =
           err instanceof Error ? err.message : 'Registration failed';
@@ -51,7 +50,7 @@ export function useAuth() {
         setLoading(false);
       }
     },
-    [storeLogin, navigate, setLoading, setError, clearError],
+    [storeLogin, router, setLoading, setError, clearError],
   );
 
   const logout = useCallback(async () => {
@@ -63,9 +62,9 @@ export function useAuth() {
       // Logout even if API call fails
     } finally {
       storeLogout();
-      navigate(ROUTES.HOME);
+      router.push('/');
     }
-  }, [storeLogout, navigate, refreshToken]);
+  }, [storeLogout, router, refreshToken]);
 
   return { login, register, logout };
 }

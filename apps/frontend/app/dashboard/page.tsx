@@ -1,22 +1,23 @@
+'use client';
+
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useAuthStore } from '@/store/auth.store';
 import { useHistoryStore, SimulationHistoryItem } from '@/store/history.store';
 import { useToast } from '@/components/common/Toast';
 import { useConfirm } from '@/store/confirm.store';
 import { userService } from '@/services/user.service';
 import { formatWon } from '@/utils/calculator';
-import { ROUTES } from '@/router/routes';
 
 const tools = [
-  { num: '01', title: '퇴사 시뮬레이터', href: ROUTES.SIMULATOR },
-  { num: '02', title: '퇴사각 테스트', href: ROUTES.RESIGNATION_QUIZ },
-  { num: '03', title: '연봉 계산기', href: ROUTES.SALARY_CALCULATOR },
-  { num: '04', title: '퇴직연금 계산기', href: ROUTES.PENSION_CALCULATOR },
-  { num: '05', title: '이직 가이드', href: ROUTES.JOB_GUIDE },
+  { num: '01', title: '퇴사 시뮬레이터', href: '/simulator' },
+  { num: '02', title: '퇴사각 테스트', href: '/resignation-quiz' },
+  { num: '03', title: '연봉 계산기', href: '/salary-calculator' },
+  { num: '04', title: '퇴직연금 계산기', href: '/pension-calculator' },
+  { num: '05', title: '이직 가이드', href: '/job-guide' },
 ];
 
-export function DashboardPage() {
+export default function DashboardPage() {
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
   const { simulations, removeSimulation, clearHistory } = useHistoryStore();
@@ -113,7 +114,7 @@ export function DashboardPage() {
             {tools.map((tool) => (
               <Link
                 key={tool.href}
-                to={tool.href}
+                href={tool.href}
                 className="group flex items-center gap-4 py-4 border-b border-neutral-100 hover:border-neutral-300 transition-colors"
               >
                 <span className="text-xs text-neutral-300 tabular-nums">{tool.num}</span>
@@ -146,7 +147,7 @@ export function DashboardPage() {
             <div className="py-12 text-center">
               <p className="text-neutral-400 mb-4">기록이 없습니다</p>
               <Link
-                to={ROUTES.SIMULATOR}
+                href="/simulator"
                 className="text-sm text-neutral-900 font-medium hover:underline"
               >
                 시뮬레이션 시작 →

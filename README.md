@@ -90,8 +90,8 @@ pnpm --filter backend migration:run
 pnpm dev
 
 # 또는 개별 실행
-pnpm --filter backend start:dev     # http://localhost:3000
-pnpm --filter frontend dev          # http://localhost:5173
+pnpm --filter backend start:dev     # http://localhost:4000
+pnpm --filter frontend dev          # http://localhost:5174
 ```
 
 ## API 문서
