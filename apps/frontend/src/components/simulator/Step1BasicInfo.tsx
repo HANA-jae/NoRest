@@ -3,13 +3,14 @@ import { useSimulatorStore } from '@/store/simulator.store';
 
 export function Step1BasicInfo() {
   const store = useSimulatorStore();
+  const [annualSalary, setAnnualSalary] = useState<number>(store.monthlySalary > 0 ? store.monthlySalary * 12 : 0);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
     if (!store.startDate) newErrors.startDate = '입사일을 입력하세요';
     if (!store.monthlySalary || store.monthlySalary <= 0)
-      newErrors.monthlySalary = '월급을 입력하세요';
+      newErrors.monthlySalary = '연봉을 입력하세요';
     if (!store.age || store.age < 18 || store.age > 70)
       newErrors.age = '나이를 입력하세요 (18~70)';
     setErrors(newErrors);
@@ -31,6 +32,7 @@ export function Step1BasicInfo() {
         </label>
         <input
           type="date"
+          max="9999-12-31"
           value={store.startDate}
           onChange={(e) => store.setStep1({ startDate: e.target.value })}
           className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
@@ -40,19 +42,23 @@ export function Step1BasicInfo() {
         )}
       </div>
 
-      {/* 월급 */}
+      {/* 연봉 */}
       <div>
         <label className="block text-sm font-medium text-neutral-700 mb-2">
-          월급 (세전)
+          연봉 (세전)
         </label>
         <div className="relative">
           <input
-            type="number"
-            placeholder="3,000,000"
-            value={store.monthlySalary || ''}
-            onChange={(e) =>
-              store.setStep1({ monthlySalary: Number(e.target.value) })
-            }
+            type="text"
+            inputMode="numeric"
+            placeholder="36,000,000"
+            value={annualSalary ? annualSalary.toLocaleString('ko-KR') : ''}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^0-9]/g, '');
+              const annual = Number(raw) || 0;
+              setAnnualSalary(annual);
+              store.setStep1({ monthlySalary: Math.round(annual / 12) });
+            }}
             className="w-full px-4 py-3 pr-12 border border-neutral-200 rounded-lg text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
           />
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-neutral-400">
@@ -62,9 +68,9 @@ export function Step1BasicInfo() {
         {errors.monthlySalary && (
           <p className="mt-1 text-xs text-red-500">{errors.monthlySalary}</p>
         )}
-        {store.monthlySalary > 0 && (
+        {annualSalary > 0 && (
           <p className="mt-1 text-xs text-neutral-400">
-            연봉 약 {Math.round(store.monthlySalary * 12 / 10000).toLocaleString()}만원
+            월급 약 {Math.round(annualSalary / 12).toLocaleString('ko-KR')}원
           </p>
         )}
       </div>

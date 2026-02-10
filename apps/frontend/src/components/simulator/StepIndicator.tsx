@@ -18,7 +18,7 @@ export function StepIndicator() {
             <div
               className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
                 step.num === currentStep
-                  ? 'bg-neutral-900 text-white scale-110'
+                  ? 'bg-neutral-900 text-white scale-100'
                   : step.num < currentStep
                     ? 'bg-neutral-700 text-white'
                     : 'bg-neutral-200 text-neutral-400'
@@ -33,7 +33,7 @@ export function StepIndicator() {
               )}
             </div>
             <span
-              className={`mt-2 text-xs tracking-tight ${
+              className={`mt-2 text-xs tracking-tight whitespace-nowrap ${
                 step.num === currentStep
                   ? 'text-neutral-900 font-medium'
                   : step.num < currentStep

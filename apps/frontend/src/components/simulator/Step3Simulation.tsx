@@ -59,12 +59,14 @@ export function Step3Simulation() {
               </label>
               <div className="relative flex-1">
                 <input
-                  type="number"
-                  placeholder={field.placeholder}
-                  value={store[field.key] || ''}
-                  onChange={(e) =>
-                    store.setStep3({ [field.key]: Number(e.target.value) })
-                  }
+                  type="text"
+                  inputMode="numeric"
+                  placeholder={Number(field.placeholder).toLocaleString('ko-KR')}
+                  value={store[field.key] ? store[field.key].toLocaleString('ko-KR') : ''}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/[^0-9]/g, '');
+                    store.setStep3({ [field.key]: Number(raw) || 0 });
+                  }}
                   className="w-full px-3 py-2.5 pr-10 border border-neutral-200 rounded-lg text-sm text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-400">

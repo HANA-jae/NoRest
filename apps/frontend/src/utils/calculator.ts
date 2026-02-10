@@ -5,6 +5,8 @@ export interface Step1Input {
   startDate: string;
   monthlySalary: number;
   hasSeverancePay: boolean;
+  hasInterimSettlement: boolean;
+  interimSettlementDate: string;
   insuranceMonths: number;
   resignationType: 'voluntary' | 'involuntary';
   age: number;
@@ -206,9 +208,14 @@ export function calculate(
   const workingYears = Math.floor(workingDays / 365);
   const workingMonths = Math.floor(workingDays / 30);
 
+  // 중간정산 시 퇴직금은 정산일 이후 근속일수로 계산
+  const severanceDays = step1.hasInterimSettlement && step1.interimSettlementDate
+    ? calculateWorkingDays(step1.interimSettlementDate)
+    : workingDays;
+
   const { severancePay, dailyAvgWage } = calculateSeverancePay(
     step1.monthlySalary,
-    workingDays,
+    severanceDays,
     step1.hasSeverancePay,
   );
 

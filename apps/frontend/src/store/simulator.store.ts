@@ -11,6 +11,8 @@ interface SimulatorState {
   startDate: string;
   monthlySalary: number;
   hasSeverancePay: boolean;
+  hasInterimSettlement: boolean;
+  interimSettlementDate: string;
   insuranceMonths: number;
   resignationType: 'voluntary' | 'involuntary';
   age: number;
@@ -40,6 +42,8 @@ export const useSimulatorStore = create<SimulatorState>((set, get) => ({
   startDate: '',
   monthlySalary: 0,
   hasSeverancePay: true,
+  hasInterimSettlement: false,
+  interimSettlementDate: '',
   insuranceMonths: 0,
   resignationType: 'involuntary',
   age: 30,
@@ -71,6 +75,8 @@ export const useSimulatorStore = create<SimulatorState>((set, get) => ({
       startDate: state.startDate,
       monthlySalary: state.monthlySalary,
       hasSeverancePay: state.hasSeverancePay,
+      hasInterimSettlement: state.hasInterimSettlement,
+      interimSettlementDate: state.interimSettlementDate,
       insuranceMonths: state.insuranceMonths,
       resignationType: state.resignationType,
       age: state.age,
@@ -93,6 +99,8 @@ export const useSimulatorStore = create<SimulatorState>((set, get) => ({
       startDate: '',
       monthlySalary: 0,
       hasSeverancePay: true,
+      hasInterimSettlement: false,
+      interimSettlementDate: '',
       insuranceMonths: 0,
       resignationType: 'involuntary',
       age: 30,
