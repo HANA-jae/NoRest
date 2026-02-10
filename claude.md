@@ -99,7 +99,7 @@ You are my **Technical Co-Founder**. Your job is to help me build a real product
 
 # Subagent 활용 워크플로우 가이드
 
-이 문서는 BIST_NEW 프로젝트에서 Cursor의 subagent(Task) 기능을 효과적으로 활용하기 위한 **상세 가이드**입니다.
+이 문서는 HAN 프로젝트에서 subagent(Task) 기능을 효과적으로 활용하기 위한 **상세 가이드**입니다.
 사용자(제품 오너)와 AI(기술 공동 창업자) 모두를 위한 문서입니다.
 
 ---
@@ -115,29 +115,29 @@ Subagent는 Cursor IDE 내에서 **독립적인 AI 작업자**를 병렬로 실�
 
 ### 1.2. 왜 필요한가?
 
-BIST_NEW 프로젝트 기준:
+HAN 프로젝트 기준:
 
 | 구분 | 규모 |
 |------|------|
-| 프론트엔드 파일 | ~299개 (tsx 173, ts 123) |
-| 백엔드 파일 | ~289개 (ts 279) |
-| 화면 1개당 관련 파일 | 6~8개 (프론트 3~5 + 백엔드 3) |
-| 문서 | ~69개 |
-| 테스트 | ~70개 |
+| 프론트엔드 (apps/frontend/) | 페이지 ~8개, 컴포넌트 ~15개, 스토어 7개, 유틸 ~5개 |
+| 백엔드 (apps/backend/) | 모듈 4개 (auth, users, health, common), 설정 ~6개 |
+| 공유 패키지 (packages/shared/) | 타입 3개, 상수 2개, 유틸 1개 |
+| 기능 1개당 관련 파일 | 5~8개 (프론트 3~5 + 백엔드 2~3) |
 
-**화면 1개를 분석하려면** 최소 6개 파일을 봐야 합니다:
+**기능 1개를 분석하려면** 최소 5개 파일을 봐야 합니다:
 
 ```
-[프론트엔드]
-├── app/bsn/BSN0110M00.tsx              ← 화면 컴포넌트
-├── modules/bsn/hooks/useBSN0110M00.ts  ← 비즈니스 로직 훅
-├── modules/bsn/services/BSN0110M00-api.service.ts  ← API 호출
-├── modules/bsn/types/BSN0110M00.types.ts           ← 타입 정의
+[프론트엔드 - 퇴사 시뮬레이터 예시]
+├── app/simulator/page.tsx                  ← 페이지 (Next.js App Router)
+├── app/simulator/layout.tsx                ← 레이아웃 (메타데이터)
+├── src/components/simulator/SimulatorLayout.tsx  ← UI 컴포넌트
+├── src/store/simulator.store.ts            ← Zustand 상태 관리
+├── src/utils/calculator.ts                 ← 계산 로직
 
-[백엔드]
-├── bsn/BSN0110M00.controller.ts        ← API 엔드포인트
-├── bsn/BSN0110M00.service.ts           ← 비즈니스 로직 + SQL
-├── bsn/dto/BSN0110M00.dto.ts           ← DTO 정의
+[백엔드 - 인증 예시]
+├── auth/auth.controller.ts                 ← API 엔드포인트
+├── auth/auth.service.ts                    ← 비즈니스 로직
+├── auth/dto/register.dto.ts                ← DTO 정의
 ```
 
 subagent 없이 순차 처리하면 **파일을 하나씩** 읽어야 하지만,
@@ -158,9 +158,9 @@ subagent를 쓰면 **프론트/백엔드를 동시에** 분석할 수 있습니�
 | **적합한 작업** | 파일 찾기, 패턴 분석, 구조 파악, 코드 검색 |
 
 **사용 예시**:
-- "BSN0110M00 화면의 전체 파일 구조 파악"
-- "TBL_BSN_SCDC 테이블을 사용하는 모든 파일 찾기"
-- "AG-Grid columnDefs 패턴이 어떻게 되어있는지 확인"
+- "퇴사 시뮬레이터의 전체 파일 구조 파악"
+- "useAuthStore를 사용하는 모든 파일 찾기"
+- "Zustand persist 패턴이 어떻게 되어있는지 확인"
 
 ### 2.2. generalPurpose (범용 에이전트)
 
@@ -173,8 +173,8 @@ subagent를 쓰면 **프론트/백엔드를 동시에** 분석할 수 있습니�
 | **적합한 작업** | 코드 분석 + 수정, 리팩토링, 복잡한 비교 분석 |
 
 **사용 예시**:
-- "BSN0110M00의 저장 로직을 분석하고 빠진 유효성 검사 제안"
-- "공통 컴포넌트 변경 시 영향받는 모든 파일 찾아서 수정"
+- "시뮬레이터의 계산 로직을 분석하고 빠진 엣지 케이스 제안"
+- "Header 컴포넌트 변경 시 영향받는 모든 파일 찾아서 수정"
 
 ### 2.3. 유형 선택 기준
 
@@ -209,11 +209,11 @@ subagent는 **이전 대화 내용을 모릅니다**. 따라서:
 
 ```
 ❌ 나쁜 프롬프트:
-"위에서 말한 그 화면 분석해줘"
+"위에서 말한 그 페이지 분석해줘"
 
 ✅ 좋은 프롬프트:
-"BIST_NEW 프로젝트의 apps/client/src/app/bsn/BSN0110M00.tsx 파일의
- AG-Grid columnDefs 구조와 사용된 cellRenderer 패턴을 분석해주세요."
+"HAN 프로젝트의 apps/frontend/src/components/simulator/SimulatorLayout.tsx 파일의
+ Step 전환 로직과 Zustand store 연동 패턴을 분석해주세요."
 ```
 
 ### 3.3. 프롬프트 필수 요소
@@ -222,196 +222,189 @@ subagent에게 전달하는 프롬프트에는 아래 요소를 **반드시 포�
 
 | 요소 | 설명 | 예시 |
 |------|------|------|
-| **프로젝트명** | 어떤 프로젝트인지 | "BIST_NEW 프로젝트의" |
-| **대상 경로** | 탐색할 디렉터리/파일 | "apps/client/src/app/bsn/" |
-| **작업 목적** | 무엇을 하려는지 | "AG-Grid 사용 패턴을 분석" |
-| **확인 항목** | 구체적으로 뭘 볼지 | "1. columnDefs 구조 2. cellRenderer" |
+| **프로젝트명** | 어떤 프로젝트인지 | "HAN 프로젝트의" |
+| **대상 경로** | 탐색할 디렉터리/파일 | "apps/frontend/src/components/simulator/" |
+| **작업 목적** | 무엇을 하려는지 | "Step 전환 로직 분석" |
+| **확인 항목** | 구체적으로 뭘 볼지 | "1. store 연동 구조 2. 계산 유틸 호출" |
 | **결과 형식** | 어떤 형태로 결과를 줄지 | "테이블 형태로 정리해주세요" |
 
 ---
 
-## 4. BIST_NEW 프로젝트 맞춤 시나리오
+## 4. HAN 프로젝트 맞춤 시나리오
 
-### 4.1. 새 화면 개발 요청
+### 4.1. 새 페이지/기능 개발 요청
 
-**사용자 요청 예시**: "BSN0810M00 화면 만들어줘. 사업수주현황 목록이야."
-
-**subagent 실행 계획** (4개 병렬):
-
-```
-┌─────────────────────────────────────────────────────┐
-│ Agent 1 [explore] - 유사 프론트엔드 화면 분석        │
-│                                                     │
-│ 대상: apps/client/src/app/bsn/                      │
-│ 목적: 목록형 화면(BSN0010M00, BSN0300M00 등) 중     │
-│      가장 유사한 구조의 화면을 찾아서                  │
-│      - 컴포넌트 구조                                 │
-│      - AG-Grid 설정                                 │
-│      - 검색 조건 폼 패턴                             │
-│      을 분석                                        │
-└─────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────┐
-│ Agent 2 [explore] - 유사 백엔드 모듈 분석            │
-│                                                     │
-│ 대상: apps/server/src/bsn/                          │
-│ 목적: 목록 조회 API가 있는 화면 중 유사한 구조 파악    │
-│      - Controller 라우트 패턴                        │
-│      - Service SQL 쿼리 패턴                        │
-│      - DTO 구조                                     │
-└─────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────┐
-│ Agent 3 [explore] - 관련 DB 테이블/타입 분석         │
-│                                                     │
-│ 대상: apps/server/src/bsn/ + apps/client/src/modules│
-│ 목적: 수주 관련 테이블(TBL_BSN_SCDC 등) 사용 패턴    │
-│      - 어떤 테이블을 조인하는지                       │
-│      - TypeScript 타입 정의 패턴                     │
-└─────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────┐
-│ Agent 4 [explore] - AS-IS 소스 분석                  │
-│                                                     │
-│ 대상: BISTMain 워크스페이스                           │
-│ 목적: 기존 Flex 소스에서 해당 기능의                   │
-│      - 화면 레이아웃 (.mxml)                         │
-│      - 비즈니스 로직 (.as)                           │
-│      - 프로시저 호출 패턴                             │
-│      을 파악                                        │
-└─────────────────────────────────────────────────────┘
-```
-
-**결과 종합 후**: 분석 결과를 바탕으로 새 화면의 코드를 생성합니다.
-
-### 4.2. 버그 수정 요청
-
-**사용자 요청 예시**: "BSN0110M00에서 저장 버튼 누르면 에러 나"
+**사용자 요청 예시**: "퇴직금 계산기 페이지 만들어줘"
 
 **subagent 실행 계획** (3개 병렬):
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│ Agent 1 [explore] - 프론트엔드 저장 흐름 추적        │
+│ Agent 1 [explore] - 유사 프론트엔드 페이지 분석       │
 │                                                     │
-│ 대상 파일:                                          │
-│ - apps/client/src/app/bsn/BSN0110M00.tsx            │
-│ - apps/client/src/modules/bsn/hooks/useBSN0110M00.ts│
-│ - apps/client/src/modules/bsn/services/             │
-│   BSN0110M00-api.service.ts                         │
-│                                                     │
-│ 확인: handleSave 함수 → API 호출 → 요청 데이터 구조  │
+│ 대상: apps/frontend/app/ + apps/frontend/src/        │
+│ 목적: 유사한 계산기 페이지(salary-calculator,         │
+│      pension-calculator) 구조를 분석                  │
+│      - App Router 페이지/레이아웃 패턴                │
+│      - Zustand store 구조                           │
+│      - 계산 유틸 함수 패턴                            │
 └─────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────┐
-│ Agent 2 [explore] - 백엔드 저장 API 분석             │
+│ Agent 2 [explore] - 백엔드 API 패턴 분석             │
 │                                                     │
-│ 대상 파일:                                          │
-│ - apps/server/src/bsn/BSN0110M00.controller.ts      │
-│ - apps/server/src/bsn/BSN0110M00.service.ts         │
-│ - apps/server/src/bsn/dto/BSN0110M00.dto.ts         │
-│                                                     │
-│ 확인: POST/PUT 엔드포인트 → DTO 검증 → SQL 실행      │
+│ 대상: apps/backend/src/                              │
+│ 목적: 기존 API 엔드포인트 구조 파악                   │
+│      - Controller/Service/DTO 패턴                   │
+│      - 인증/Guard 적용 방식                          │
+│      - 응답 포맷 (transform interceptor)             │
 └─────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────┐
-│ Agent 3 [explore] - 유사 화면 저장 패턴 비교         │
+│ Agent 3 [explore] - 공유 타입/상수 분석               │
 │                                                     │
-│ 대상: 정상 동작하는 다른 BSN 화면의 저장 로직         │
-│ 목적: BSN0110M00과 다른 점 찾기                      │
-│      (dev-patterns.mdc의 저장 패턴과 비교)           │
+│ 대상: packages/shared/src/                           │
+│ 목적: 기존 공유 타입/상수 확인                        │
+│      - IUser, IApiResponse 등 타입 정의              │
+│      - 재사용 가능한 validation 유틸                  │
+└─────────────────────────────────────────────────────┘
+```
+
+**결과 종합 후**: 분석 결과를 바탕으로 새 페이지의 코드를 생성합니다.
+
+### 4.2. 버그 수정 요청
+
+**사용자 요청 예시**: "시뮬레이터에서 계산 결과가 이상해"
+
+**subagent 실행 계획** (3개 병렬):
+
+```
+┌─────────────────────────────────────────────────────┐
+│ Agent 1 [explore] - 프론트엔드 계산 흐름 추적        │
+│                                                     │
+│ 대상 파일:                                          │
+│ - apps/frontend/app/simulator/page.tsx               │
+│ - apps/frontend/src/components/simulator/            │
+│   SimulatorLayout.tsx, Step2Results.tsx               │
+│ - apps/frontend/src/store/simulator.store.ts         │
+│                                                     │
+│ 확인: 입력값 → store 업데이트 → 계산 함수 호출 흐름   │
+└─────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────┐
+│ Agent 2 [explore] - 계산 로직 분석                   │
+│                                                     │
+│ 대상 파일:                                          │
+│ - apps/frontend/src/utils/calculator.ts              │
+│ - apps/frontend/src/utils/salary-calculator.ts       │
+│                                                     │
+│ 확인: 퇴직금/실업급여/생존기간 계산 공식 정확성        │
+└─────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────┐
+│ Agent 3 [explore] - 유사 계산기 패턴 비교             │
+│                                                     │
+│ 대상: salary-calculator, pension-calculator 로직     │
+│ 목적: 정상 동작하는 다른 계산기와 패턴 비교            │
 └─────────────────────────────────────────────────────┘
 ```
 
 ### 4.3. 구조 파악 / "이거 어떻게 동작해?" 질문
 
-**사용자 요청 예시**: "사업번호 동기화가 어떻게 동작하는지 알려줘"
+**사용자 요청 예시**: "인증 흐름이 어떻게 동작하는지 알려줘"
 
 **subagent 실행 계획** (2개 병렬):
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│ Agent 1 [explore] - 프론트엔드 흐름                  │
+│ Agent 1 [explore] - 프론트엔드 인증 흐름              │
 │                                                     │
 │ 탐색 대상:                                          │
-│ - apps/client/src/hooks/useGlobalBusiness.ts         │
-│ - apps/client/src/utils/globalBusinessManager.ts     │
-│ - 이 훅을 사용하는 모든 화면 목록                     │
+│ - apps/frontend/src/hooks/useAuth.ts                 │
+│ - apps/frontend/src/store/auth.store.ts              │
+│ - apps/frontend/src/services/auth.service.ts         │
+│ - apps/frontend/src/lib/api-client.ts                │
+│ - apps/frontend/middleware.ts                        │
 │                                                     │
 │ 확인:                                               │
-│ 1. useGlobalBusiness 훅의 동작 원리                  │
-│ 2. 사업번호가 변경되면 어떤 이벤트가 발생하는지        │
-│ 3. 어떤 화면들이 이 훅을 사용하는지                   │
+│ 1. 로그인/회원가입 → 토큰 저장 흐름                   │
+│ 2. Zustand persist + skipHydration 패턴              │
+│ 3. middleware의 보호 라우트 처리                      │
 └─────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────┐
-│ Agent 2 [explore] - 백엔드 흐름                      │
+│ Agent 2 [explore] - 백엔드 인증 흐름                  │
 │                                                     │
 │ 탐색 대상:                                          │
-│ - 사업번호(BSN_NO) 관련 API 엔드포인트               │
-│ - 세션에 사업번호가 저장되는지                        │
+│ - apps/backend/src/auth/ (전체)                      │
+│ - apps/backend/src/common/guards/                    │
+│ - apps/backend/src/config/jwt.config.ts              │
 │                                                     │
 │ 확인:                                               │
-│ 1. 사업번호 조회/변경 API                            │
-│ 2. 세션/Redis 저장 여부                             │
+│ 1. JWT Access/Refresh 전략                           │
+│ 2. Guard 동작 원리                                   │
+│ 3. Redis 세션 저장 여부                              │
 └─────────────────────────────────────────────────────┘
 ```
 
 ### 4.4. 리팩토링 / 공통 코드 변경
 
-**사용자 요청 예시**: "CommonAgGrid 컴포넌트에 새 prop 추가하고 싶어"
+**사용자 요청 예시**: "Header 컴포넌트에 네비게이션 드롭다운 추가하고 싶어"
 
 **subagent 실행 계획** (3개 병렬):
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│ Agent 1 [explore] - CommonAgGrid 현재 구조 분석      │
+│ Agent 1 [explore] - Header 현재 구조 분석             │
 │                                                     │
-│ 대상: apps/client/src/components/grid/CommonAgGrid.tsx│
-│ 확인: 현재 props, 내부 로직, 기존 확장 패턴           │
+│ 대상: apps/frontend/src/components/common/Header.tsx │
+│ 확인: 현재 props, 내부 로직, store 연동, 기존 패턴    │
 └─────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────┐
-│ Agent 2 [explore] - 사용처 전수 조사                  │
+│ Agent 2 [explore] - 사용처 및 레이아웃 분석           │
 │                                                     │
-│ 대상: 전체 프로젝트                                  │
-│ 확인: CommonAgGrid를 import하는 모든 파일 목록        │
+│ 대상: apps/frontend/app/layout.tsx + providers.tsx    │
+│ 확인: Header가 어디서 렌더링되는지, 전체 레이아웃 구조 │
 │      (변경 영향 범위 파악)                           │
 └─────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────┐
-│ Agent 3 [explore] - 테스트 코드 확인                  │
+│ Agent 3 [explore] - 관련 store/hook 확인             │
 │                                                     │
-│ 대상: **/*.test.tsx 중 CommonAgGrid 관련             │
-│ 확인: 기존 테스트 존재 여부, 테스트 패턴               │
+│ 대상: apps/frontend/src/store/ui.store.ts            │
+│      apps/frontend/src/hooks/useAuth.ts              │
+│ 확인: 모달 토글, 인증 상태 관리 패턴                   │
 └─────────────────────────────────────────────────────┘
 ```
 
-### 4.5. 엑셀 출력 기능 개발
+### 4.5. 결과 공유/캡처 기능 개발
 
-**사용자 요청 예시**: "BSN0300M00 화면에 엑셀 다운로드 추가해줘"
+**사용자 요청 예시**: "시뮬레이터 결과를 이미지로 공유하는 기능 추가해줘"
 
 **subagent 실행 계획** (2개 병렬):
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│ Agent 1 [explore] - 기존 엑셀 출력 패턴 분석         │
+│ Agent 1 [explore] - 기존 공유/캡처 패턴 분석          │
 │                                                     │
 │ 대상:                                               │
-│ - apps/client/src/lib/excel/excelUtils.ts            │
-│ - 엑셀 출력이 있는 기존 화면 (BSN0010, PRJ0060 등)   │
+│ - apps/frontend/src/components/simulator/            │
+│   ShareableResult.tsx                                │
+│ - html2canvas 사용 패턴                              │
 │                                                     │
-│ 확인: 엑셀 빌더 패턴, 스타일 프리셋 사용법            │
+│ 확인: 캡처 로직, 스타일링, 다운로드 구현 방식          │
 └─────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────┐
-│ Agent 2 [explore] - BSN0300M00 화면 데이터 구조      │
+│ Agent 2 [explore] - 결과 페이지 데이터 구조           │
 │                                                     │
 │ 대상:                                               │
-│ - apps/client/src/app/bsn/BSN0300M00.tsx             │
-│ - apps/server/src/bsn/BSN0300M00.service.ts          │
+│ - apps/frontend/src/components/simulator/            │
+│   Step4Final.tsx, Step2Results.tsx                    │
+│ - apps/frontend/src/store/simulator.store.ts         │
 │                                                     │
-│ 확인: 그리드 데이터 구조, 컬럼 정의, 데이터 타입       │
+│ 확인: 결과 데이터 구조, 표시 컴포넌트, store 상태      │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -425,13 +418,12 @@ subagent에게 전달하는 프롬프트에는 아래 요소를 **반드시 포�
 
 | 카테고리 | 키워드/패턴 | subagent 수 |
 |----------|------------|-------------|
-| **새 화면 개발** | "화면 만들어줘", "새로 개발", "XX 화면 추가" | 3~4개 |
-| **버그 수정** | "에러 나", "안 돼", "버그", "문제 있어" | 2~3개 |
+| **새 페이지 개발** | "페이지 만들어줘", "새로 개발", "XX 추가" | 3개 |
+| **버그 수정** | "에러 나", "안 돼", "버그", "계산이 이상해" | 2~3개 |
 | **구조 파악** | "어떻게 동작", "구조 파악", "흐름 분석" | 2개 |
 | **리팩토링** | "리팩토링", "공통 변경", "전체 수정" | 3개 |
 | **영향도 분석** | "어디서 쓰이는지", "영향 범위", "사용처" | 2개 |
-| **AS-IS 비교** | "기존 소스", "AS-IS", "Flex 소스 확인" | 1~2개 |
-| **엑셀/PDF** | "엑셀 출력", "다운로드 추가" | 2개 |
+| **공유/캡처** | "이미지 공유", "캡처", "다운로드" | 2개 |
 
 ### 5.2. subagent 없이 직접 처리하는 경우
 
@@ -448,16 +440,16 @@ subagent에게 전달하는 프롬프트에는 아래 요소를 **반드시 포�
 **구체적일수록 좋습니다:**
 
 ```
-❌ "BSN0110 화면 봐줘"
-✅ "BSN0110M00 화면에서 저장 버튼 클릭 시 백엔드까지의 전체 흐름을 분석해줘"
+❌ "시뮬레이터 봐줘"
+✅ "퇴사 시뮬레이터에서 입력값 변경 시 결과 계산까지의 전체 흐름을 분석해줘"
 
-❌ "에러 고쳐줘"  
-✅ "BSN0110M00에서 저장 시 500 에러가 발생해. 
-    콘솔에 'Cannot read property bsnNo of undefined' 에러가 보여"
+❌ "에러 고쳐줘"
+✅ "연봉 계산기에서 4대보험 계산이 안 돼.
+    콘솔에 'Cannot read property salary of undefined' 에러가 보여"
 
 ❌ "리팩토링 해줘"
-✅ "CommonAgGrid에 onCellDoubleClick prop을 추가하고, 
-    기존 사용처에서 deprecated된 onCellClicked를 교체해줘"
+✅ "Header에 모바일 햄버거 메뉴를 추가하고,
+    기존 nav 링크를 드롭다운으로 전환해줘"
 ```
 
 ---
@@ -466,112 +458,164 @@ subagent에게 전달하는 프롬프트에는 아래 요소를 **반드시 포�
 
 subagent에 정확한 경로를 전달하기 위한 참고 맵입니다.
 
-### 6.1. 프론트엔드 (apps/client/src/)
+### 6.1. 프론트엔드 (apps/frontend/)
 
 ```
-apps/client/src/
-├── app/                          ← Next.js App Router
-│   ├── bsn/                      ← 사업 화면 (~58개)
-│   │   ├── BSN0110M00.tsx        ← 화면 컴포넌트 (탭/메인)
-│   │   ├── BSN0011P00/           ← 팝업용 라우트 폴더
-│   │   │   └── page.tsx
-│   │   └── BSN0011P00.tsx        ← 팝업 컴포넌트
-│   ├── prj/                      ← 프로젝트 화면 (~25개)
-│   ├── prs/                      ← 산정 화면 (~18개)
-│   ├── psm/                      ← PSM 화면 (~15개)
-│   ├── sys/                      ← 시스템 화면 (~14개)
-│   ├── com/                      ← 공통 화면 (~18개)
-│   ├── usr/                      ← 사용자 화면
-│   ├── popup/                    ← 팝업 라우트
-│   └── common/                   ← 공통 CSS (ag-grid.css, common.css)
+apps/frontend/
+├── app/                              ← Next.js 14 App Router
+│   ├── layout.tsx                    ← 루트 레이아웃 (Header + Footer)
+│   ├── page.tsx                      ← 홈 페이지
+│   ├── providers.tsx                 ← 클라이언트 Providers (Zustand hydration)
+│   ├── globals.css                   ← Tailwind CSS v4 글로벌 스타일
+│   ├── not-found.tsx                 ← 404 페이지
+│   ├── simulator/                    ← 퇴사 시뮬레이터
+│   │   ├── page.tsx
+│   │   └── layout.tsx
+│   ├── resignation-quiz/             ← 퇴사각 테스트
+│   ├── salary-calculator/            ← 연봉 계산기
+│   ├── pension-calculator/           ← 퇴직연금 계산기
+│   ├── job-guide/                    ← 이직 가이드
+│   ├── dashboard/                    ← 대시보드 (인증 필요)
+│   └── register/                     ← 회원가입
 │
-├── components/                   ← 공통 컴포넌트
-│   ├── grid/                     ← AG-Grid 관련
-│   │   ├── CommonAgGrid.tsx      ← 그리드 래퍼
-│   │   ├── MergedHeader.tsx      ← 병합 헤더
-│   │   └── gridConstants.ts      ← 그리드 상수
-│   └── common/                   ← 공통 UI
-│       └── LoadingMessage.tsx    ← 로딩 컴포넌트
-│
-├── modules/                      ← 모듈별 로직 분리
-│   ├── bsn/
-│   │   ├── hooks/                ← useBSN0110M00.ts 등
-│   │   ├── services/             ← BSN0110M00-api.service.ts 등
-│   │   └── types/                ← BSN0110M00.types.ts 등
-│   ├── prj/
-│   ├── prs/
-│   ├── sys/
-│   ├── com/
-│   │   └── hooks/usePopup.ts     ← 팝업 훅
-│   └── auth/
-│
-├── hooks/                        ← 전역 훅
-│   └── useGlobalBusiness.ts      ← 사업번호 동기화
-│
-├── contexts/                     ← React Context
-│   └── ToastContext.tsx           ← 토스트/확인 다이얼로그
-│
-├── lib/                          ← 유틸리티
-│   └── excel/excelUtils.ts       ← 엑셀 유틸리티
-│
-└── utils/                        ← 유틸리티
-    └── globalBusinessManager.ts  ← 전역 사업번호 매니저
-```
-
-### 6.2. 백엔드 (apps/server/src/)
-
-```
-apps/server/src/
-├── bsn/                          ← 사업 모듈 (평면 구조)
-│   ├── bsn.module.ts             ← 모듈 정의 (모든 BSN 등록)
-│   ├── BSN0110M00.controller.ts  ← API 엔드포인트
-│   ├── BSN0110M00.service.ts     ← 비즈니스 로직 + SQL
-│   ├── dto/
-│   │   └── BSN0110M00.dto.ts     ← DTO 정의
-│   └── excel/                    ← 엑셀 빌더 (선택)
-│
-├── prj/                          ← 프로젝트 모듈
-├── prs/                          ← 산정 모듈
-├── psm/                          ← PSM 모듈
-├── sys/                          ← 시스템 모듈
-├── com/                          ← 공통 모듈
-├── auth/                         ← 인증 모듈
-├── database/                     ← Oracle DB 설정
-├── common/                       ← DatabaseHelperService 등
-└── config/                       ← 환경 설정
-```
-
-### 6.3. AS-IS 소스 (별도 워크스페이스)
-
-```
-c:\Users\Jordan2345\Documents\01.프로젝트\사내 BIST UI 고도화\00.AS-IS 소스\BISTMain\
 ├── src/
-│   ├── bsn/                      ← 사업 화면 (.mxml + .as)
-│   ├── prj/                      ← 프로젝트 화면
-│   ├── prs/                      ← 산정 화면
-│   └── ...
+│   ├── components/                   ← UI 컴포넌트
+│   │   ├── common/                   ← Header, Footer, Toast, ConfirmModal, LoadingSpinner
+│   │   ├── auth/                     ← LoginModal, RegisterForm
+│   │   ├── simulator/                ← SimulatorLayout, Step1~4, ShareableResult
+│   │   └── quiz/                     ← QuizLayout, QuizResult, QuestionCard, QuizIntro
+│   │
+│   ├── store/                        ← Zustand 상태 관리
+│   │   ├── auth.store.ts             ← 인증 (persist + skipHydration)
+│   │   ├── simulator.store.ts        ← 시뮬레이터 입력/결과
+│   │   ├── quiz.store.ts             ← 퇴사각 테스트
+│   │   ├── history.store.ts          ← 시뮬레이션 히스토리
+│   │   ├── ui.store.ts               ← 모달 토글 등
+│   │   ├── toast.store.ts            ← 토스트 알림
+│   │   └── confirm.store.ts          ← 확인 모달
+│   │
+│   ├── hooks/                        ← 커스텀 훅
+│   │   └── useAuth.ts                ← 로그인/로그아웃/회원가입
+│   │
+│   ├── services/                     ← API 서비스
+│   │   ├── auth.service.ts           ← 인증 API
+│   │   └── user.service.ts           ← 유저 API
+│   │
+│   ├── lib/                          ← 라이브러리
+│   │   └── api-client.ts             ← Axios 인스턴스 + 인터셉터
+│   │
+│   ├── utils/                        ← 계산 유틸리티
+│   │   ├── calculator.ts             ← 퇴직금/실업급여/생존기간
+│   │   ├── salary-calculator.ts      ← 4대보험/소득세/실수령액
+│   │   ├── pension-calculator.ts     ← DB형/DC형 퇴직연금
+│   │   └── quiz-data.ts              ← 퇴사각 테스트 문항
+│   │
+│   ├── config/                       ← 설정
+│   │   ├── env.ts                    ← 환경 변수 (NEXT_PUBLIC_*)
+│   │   └── constants.ts              ← 상수
+│   │
+│   └── types/                        ← 타입 정의
+│       └── index.ts
+│
+├── middleware.ts                      ← Next.js 미들웨어 (인증 보호)
+├── next.config.js                     ← Next.js 설정 (API rewrites)
+├── postcss.config.mjs                 ← PostCSS (Tailwind v4)
+└── tsconfig.json                      ← TypeScript 설정
 ```
 
-### 6.4. 화면 1개 = 관련 파일 맵
+### 6.2. 백엔드 (apps/backend/src/)
 
 ```
-화면 ID: BSN0110M00
+apps/backend/src/
+├── auth/                             ← 인증 모듈
+│   ├── auth.module.ts                ← 모듈 정의
+│   ├── auth.controller.ts            ← 로그인/회원가입/토큰 갱신
+│   ├── auth.service.ts               ← 인증 비즈니스 로직
+│   ├── strategies/                   ← Passport JWT 전략
+│   │   ├── jwt-access.strategy.ts
+│   │   └── jwt-refresh.strategy.ts
+│   ├── dto/                          ← 인증 DTO
+│   │   ├── login.dto.ts
+│   │   ├── register.dto.ts
+│   │   ├── refresh-token.dto.ts
+│   │   └── auth-response.dto.ts
+│   └── interfaces/                   ← JWT 인터페이스
+│
+├── users/                            ← 유저 모듈
+│   ├── users.module.ts
+│   ├── users.controller.ts
+│   ├── users.service.ts
+│   ├── entities/user.entity.ts       ← TypeORM 엔티티
+│   └── dto/                          ← 유저 DTO
+│
+├── health/                           ← 헬스체크
+│
+├── common/                           ← 공통 모듈
+│   ├── filters/                      ← 예외 필터 (HttpException, All)
+│   ├── interceptors/                 ← 인터셉터 (Transform, Logging, Timeout)
+│   ├── pipes/                        ← 파이프 (Validation)
+│   ├── decorators/                   ← 데코레이터 (CurrentUser, Public)
+│   ├── guards/                       ← 가드 (JwtAuth, JwtRefresh)
+│   ├── constants/                    ← 공통 상수
+│   └── dto/                          ← 공통 DTO (Pagination, ApiResponse)
+│
+├── config/                           ← 환경 설정
+│   ├── app.config.ts
+│   ├── database.config.ts
+│   ├── redis.config.ts
+│   ├── jwt.config.ts
+│   ├── cors.config.ts
+│   └── swagger.config.ts
+│
+├── database/                         ← TypeORM 데이터베이스
+│   ├── database.module.ts
+│   └── data-source.ts
+│
+├── redis/                            ← Redis (세션/캐시)
+│   ├── redis.module.ts
+│   └── redis.service.ts
+│
+├── app.module.ts                     ← 루트 모듈
+└── main.ts                           ← 엔트리포인트 (포트 4000)
+```
 
-[프론트엔드 - 4~5개 파일]
-apps/client/src/app/bsn/BSN0110M00.tsx                           ← 화면 UI
-apps/client/src/modules/bsn/hooks/useBSN0110M00.ts               ← 로직 훅
-apps/client/src/modules/bsn/services/BSN0110M00-api.service.ts   ← API 호출
-apps/client/src/modules/bsn/types/BSN0110M00.types.ts            ← 타입
-apps/client/src/app/bsn/BSN0110M00.test.tsx                      ← 테스트 (선택)
+### 6.3. 공유 패키지 (packages/shared/src/)
 
-[백엔드 - 3개 파일]
-apps/server/src/bsn/BSN0110M00.controller.ts   ← API 엔드포인트
-apps/server/src/bsn/BSN0110M00.service.ts      ← 비즈니스 로직 + SQL
-apps/server/src/bsn/dto/BSN0110M00.dto.ts      ← DTO
+```
+packages/shared/src/
+├── types/
+│   ├── user.types.ts                 ← IUser 인터페이스
+│   ├── auth.types.ts                 ← ILoginRequest, IAuthResponse 등
+│   └── api.types.ts                  ← IApiResponse 등
+├── constants/
+│   ├── roles.ts                      ← 유저 역할 상수
+│   └── status-codes.ts              ← 상태 코드 상수
+├── utils/
+│   └── validation.ts                 ← 공통 유효성 검사
+└── index.ts                          ← 배럴 export
+```
 
-[AS-IS - 2개 파일]
-BISTMain/src/bsn/BSN0110M00.mxml               ← Flex 화면
-BISTMain/src/bsn/BSN0110M00.as                  ← Flex 로직
+### 6.4. 기능 1개 = 관련 파일 맵
+
+```
+기능: 퇴사 시뮬레이터
+
+[프론트엔드 - 5~6개 파일]
+apps/frontend/app/simulator/page.tsx                     ← 페이지
+apps/frontend/app/simulator/layout.tsx                   ← 레이아웃/메타
+apps/frontend/src/components/simulator/SimulatorLayout.tsx ← 메인 UI
+apps/frontend/src/components/simulator/Step1BasicInfo.tsx  ← 입력 폼
+apps/frontend/src/components/simulator/Step2Results.tsx    ← 결과 표시
+apps/frontend/src/store/simulator.store.ts               ← 상태 관리
+apps/frontend/src/utils/calculator.ts                    ← 계산 로직
+
+[백엔드 - 인증 연동 시]
+apps/backend/src/auth/auth.controller.ts                 ← 인증 API
+apps/backend/src/users/users.service.ts                  ← 유저 데이터
+apps/backend/src/users/entities/user.entity.ts           ← DB 엔티티
+
+[공유]
+packages/shared/src/types/user.types.ts                  ← IUser 타입
 ```
 
 ---
@@ -636,7 +680,7 @@ BISTMain/src/bsn/BSN0110M00.as                  ← Flex 로직
 "전체 프로젝트에서 모든 패턴 분석해줘" → 시간 초과 가능
 
 ✅ 구체적인 범위 지정
-"apps/client/src/app/bsn/ 에서 AG-Grid 사용 패턴 분석" → 빠르고 정확
+"apps/frontend/src/store/ 에서 Zustand persist 사용 패턴 분석" → 빠르고 정확
 ```
 
 ### 8.3. resume 기능
@@ -660,12 +704,12 @@ subagent 실행 후 추가 질문이 필요하면 **Agent ID로 이어서 대화
 
 ### 9.1. 반드시 subagent 사용
 
-- [ ] 새 화면 개발 요청 (프론트+백엔드+DB+AS-IS 동시 분석)
+- [ ] 새 페이지 개발 요청 (프론트+백엔드+공유타입 동시 분석)
 - [ ] 3개 이상 파일에 걸친 변경 요청
 - [ ] "어떻게 동작하는지", "전체 구조", "흐름 파악" 등 탐색 질문
 - [ ] 영향도 분석이 필요한 공통 코드/컴포넌트 변경
-- [ ] AS-IS 소스와의 비교 작업
-- [ ] 여러 화면에 걸친 일괄 수정
+- [ ] 프론트엔드 + 백엔드 동시 수정이 필요한 작업
+- [ ] 여러 페이지에 걸친 일괄 수정
 
 ### 9.2. subagent 없이 직접 처리
 
@@ -685,24 +729,24 @@ subagent 작업 완료 후, 사용자에게 아래 형식으로 **요약 보고*
 ## 분석 결과 요약
 
 ### 프론트엔드 (Agent 1)
-- **파일 구조**: BSN0110M00.tsx (4,950줄) + useBSN0110M00.ts (905줄)
-- **주요 패턴**: AG-Grid 단일 목록 + 상세 폼, handleSave → api.save 흐름
-- **특이사항**: 훅이 존재하지만 컴포넌트에서 직접 API 호출하는 부분 있음
+- **파일 구조**: SimulatorLayout.tsx + Step1~4 컴포넌트
+- **주요 패턴**: Zustand store로 상태 관리, Step별 컴포넌트 분리
+- **특이사항**: calculator.ts의 계산 로직이 컴포넌트와 강결합
 
 ### 백엔드 (Agent 2)
-- **API 엔드포인트**: GET /api/bsn/0110, POST /api/bsn/0110
-- **SQL 구조**: TBL_BSN_NO_INF + TBL_BSN_SCDC 조인
-- **특이사항**: 저장 시 트랜잭션 미사용 → 개선 필요
+- **API 엔드포인트**: POST /api/auth/login, POST /api/auth/register
+- **인증 구조**: JWT Access + Refresh, Redis 세션 관리
+- **특이사항**: refresh token 만료 시 자동 로그아웃 미구현
 
 ### 영향도 (Agent 3)
-- **관련 화면**: BSN0100M00 (부모 탭), BSN0120M00 (형제 탭)
-- **공통 사용 요소**: useGlobalBusiness, CommonAgGrid
-- **주의사항**: BSN0100M00의 탭 전환 시 handleSearch 호출 필요
+- **관련 페이지**: simulator, dashboard (인증 필요)
+- **공통 사용 요소**: useAuthStore, api-client 인터셉터
+- **주의사항**: providers.tsx의 hydration 순서 주의
 
 ## 다음 단계 제안
-1. [필수] 저장 로직에 트랜잭션 추가
-2. [권장] 컴포넌트와 훅의 책임 분리
-3. [선택] 테스트 코드 추가
+1. [필수] 계산 로직 유닛 테스트 추가
+2. [권장] 계산기 유틸 함수 분리 및 재사용성 개선
+3. [선택] 결과 히스토리 백엔드 저장 구현
 ```
 
 ---
@@ -744,22 +788,22 @@ subagent 작업 완료 후, 사용자에게 아래 형식으로 **요약 보고*
 ### 11.2. 실제 대화 예시
 
 ```
-👤 사용자: "BSN0300M00 화면에 엑셀 다운로드 기능 추가해줘"
+👤 사용자: "시뮬레이터 결과를 이미지로 저장하는 기능 추가해줘"
 
 🤖 AI: (내부적으로 subagent 2개 병렬 실행)
-   - Agent 1: 기존 엑셀 출력 패턴 분석 (excelUtils.ts + 기존 화면)
-   - Agent 2: BSN0300M00 데이터 구조 분석
+   - Agent 1: 기존 ShareableResult 캡처 패턴 분석 (html2canvas)
+   - Agent 2: Step4Final 결과 데이터 구조 분석
 
-🤖 AI: "분석 완료했습니다. 
-   
-   BSN0300M00은 사업수주현황 목록이고, 
-   기존 BSN0010M00에서 사용하는 엑셀 패턴과 동일한 구조입니다.
-   
+🤖 AI: "분석 완료했습니다.
+
+   ShareableResult.tsx에 이미 html2canvas 기반 캡처 로직이 있고,
+   Step4Final에서 최종 결과를 렌더링합니다.
+
    ## 구현 계획
-   1. BSN0300M00.tsx에 엑셀 다운로드 버튼 추가
-   2. excel/excel-bsn0300.builder.ts 파일 생성
-   3. 컬럼 매핑: [번호, 사업명, 수주금액, ...]
-   
+   1. Step4Final에 '이미지 저장' 버튼 추가
+   2. ShareableResult 컴포넌트의 캡처 로직 재사용
+   3. 파일명: han-simulation-{날짜}.png
+
    진행할까요?"
 
 👤 사용자: "진행해줘"
