@@ -6,6 +6,10 @@ import { RedisModule } from './redis/redis.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { HealthModule } from './health/health.module';
+import { CodeModule } from './code/code.module';
+import { MenuModule } from './menu/menu.module';
+import { FileModule } from './file/file.module';
+import { AuditModule } from './audit/audit.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
@@ -18,6 +22,10 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
     AuthModule,
     UsersModule,
     HealthModule,
+    CodeModule,
+    MenuModule,
+    FileModule,
+    AuditModule,
   ],
   controllers: [AppController],
   providers: [

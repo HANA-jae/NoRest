@@ -24,7 +24,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
   handleRequest<T>(err: Error | null, user: T, info: Error | undefined): T {
     if (err || !user) {
-      throw err || new UnauthorizedException('Invalid or expired token');
+      throw err || new UnauthorizedException('유효하지 않거나 만료된 인증 토큰입니다');
     }
     return user;
   }

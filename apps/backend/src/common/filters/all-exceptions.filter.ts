@@ -25,7 +25,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const message =
       exception instanceof HttpException
         ? exception.message
-        : 'Internal server error';
+        : '서버 내부 오류가 발생했습니다';
 
     if (!(exception instanceof HttpException)) {
       this.logger.error(
@@ -37,7 +37,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     response.status(status).json({
       statusCode: status,
       message,
-      error: 'Internal Server Error',
+      error: '서버 내부 오류',
       timestamp: new Date().toISOString(),
       path: request.url,
     });

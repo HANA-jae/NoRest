@@ -3,8 +3,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { useUiStore } from '@/store/ui.store';
 
 export function RegisterForm() {
+  const [userId, setUserId] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const { register } = useAuth();
   const { isLoading, error } = useUiStore();
@@ -12,7 +14,7 @@ export function RegisterForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await register({ name, email, password });
+      await register({ userId, name, email, phone, password });
     } catch {
       // Error handled in useAuth
     }
@@ -25,6 +27,22 @@ export function RegisterForm() {
           {error}
         </div>
       )}
+      <div>
+        <label htmlFor="reg-userId" className="block text-sm font-medium text-neutral-700 mb-1.5">
+          아이디
+        </label>
+        <input
+          id="reg-userId"
+          type="text"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
+          placeholder="사용할 아이디 입력"
+          required
+          minLength={2}
+          maxLength={50}
+          className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
+        />
+      </div>
       <div>
         <label htmlFor="reg-name" className="block text-sm font-medium text-neutral-700 mb-1.5">
           이름
@@ -49,6 +67,20 @@ export function RegisterForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="name@example.com"
+          required
+          className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
+        />
+      </div>
+      <div>
+        <label htmlFor="reg-phone" className="block text-sm font-medium text-neutral-700 mb-1.5">
+          전화번호
+        </label>
+        <input
+          id="reg-phone"
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="010-1234-5678"
           required
           className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
         />

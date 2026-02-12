@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useUiStore } from '@/store/ui.store';
 
 export function LoginModal() {
-  const [email, setEmail] = useState('');
+  const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
   const { isLoading, error, isLoginModalOpen, closeLoginModal } = useUiStore();
@@ -30,7 +30,7 @@ export function LoginModal() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await login({ email, password });
+      await login({ userId, password });
     } catch {
       // error handled in useAuth
     }
@@ -66,15 +66,15 @@ export function LoginModal() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="login-email" className="block text-sm font-medium text-neutral-700 mb-1.5">
-              이메일
+            <label htmlFor="login-userId" className="block text-sm font-medium text-neutral-700 mb-1.5">
+              아이디
             </label>
             <input
-              id="login-email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@example.com"
+              id="login-userId"
+              type="text"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              placeholder="아이디 입력"
               required
               className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
             />

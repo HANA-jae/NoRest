@@ -97,7 +97,17 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 
   if (!response.ok) {
     const errorData = await parseResponse(response).catch(() => null);
-    throw new ApiError(response.status, response.statusText, errorData);
+    let errorMessage = response.statusText;
+    if (errorData && typeof errorData === 'object') {
+      const body = errorData as Record<string, unknown>;
+      const msg = body.message;
+      if (Array.isArray(msg)) {
+        errorMessage = msg.join(', ');
+      } else if (typeof msg === 'string') {
+        errorMessage = msg;
+      }
+    }
+    throw new ApiError(response.status, errorMessage, errorData);
   }
 
   return parseResponse<T>(response);

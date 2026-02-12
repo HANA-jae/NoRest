@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserRole, UserStatus } from '@han/shared';
 
 @Injectable()
 export class UsersService {
@@ -18,14 +19,23 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const existingUser = await this.usersRepository.findOne({
-      where: { email: createUserDto.email },
+      where: { id: createUserDto.id },
     });
 
     if (existingUser) {
-      throw new ConflictException('Email already exists');
+      throw new ConflictException('이미 존재하는 아이디입니다');
     }
 
-    const user = this.usersRepository.create(createUserDto);
+    const now = new Date();
+    const user = this.usersRepository.create({
+      ...createUserDto,
+      role: createUserDto.role || UserRole.USER,
+      status: createUserDto.status || UserStatus.ACTIVE,
+      createdDate: now,
+      createdUser: 'RESIST_SYSTEM',
+      modifiedDate: now,
+      modifiedUser: 'RESIST_SYSTEM',
+    });
     return this.usersRepository.save(user);
   }
 
@@ -36,7 +46,7 @@ export class UsersService {
   async findById(id: string): Promise<User> {
     const user = await this.usersRepository.findOne({ where: { id } });
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(`사용자를 찾을 수 없습니다 (ID: ${id})`);
     }
     return user;
   }
@@ -51,11 +61,11 @@ export class UsersService {
     if (updateUserDto.email && updateUserDto.email !== user.email) {
       const existingUser = await this.findByEmail(updateUserDto.email);
       if (existingUser) {
-        throw new ConflictException('Email already exists');
+        throw new ConflictException('이미 존재하는 이메일입니다');
       }
     }
 
-    Object.assign(user, updateUserDto);
+    Object.assign(user, updateUserDto, { modifiedDate: new Date(), modifiedUser: id });
     return this.usersRepository.save(user);
   }
 

@@ -43,9 +43,9 @@ async function bootstrap() {
     .setDescription(configService.get('swagger.description') || 'HAN API Documentation')
     .setVersion(configService.get('swagger.version') || '1.0')
     .addBearerAuth()
-    .addTag('auth', 'Authentication endpoints')
-    .addTag('users', 'User management endpoints')
-    .addTag('health', 'Health check endpoints')
+    .addTag('auth', '인증 API')
+    .addTag('users', '사용자 관리 API')
+    .addTag('health', '서버 상태 확인 API')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);

@@ -1,12 +1,14 @@
 export interface LoginPayload {
-  email: string;
+  userId: string;
   password: string;
 }
 
 export interface RegisterPayload {
-  email: string;
+  userId: string;
   password: string;
   name: string;
+  email: string;
+  phone: string;
 }
 
 export interface AuthTokens {

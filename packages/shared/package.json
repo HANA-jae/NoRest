@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "build": "tsup",
+    "build": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\" && tsup && tsc --declaration --emitDeclarationOnly --outDir dist",
     "dev": "tsup --watch"
   },
   "devDependencies": {

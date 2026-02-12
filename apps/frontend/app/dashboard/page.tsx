@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth.store';
 import { useHistoryStore, SimulationHistoryItem } from '@/store/history.store';
@@ -20,7 +20,13 @@ const tools = [
 export default function DashboardPage() {
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
-  const { simulations, removeSimulation, clearHistory } = useHistoryStore();
+  const { removeSimulation, clearHistory, getUserSimulations, loadFromServer } = useHistoryStore();
+  const simulations = getUserSimulations();
+
+  // 마운트 시 서버에서 히스토리 로드 시도
+  useEffect(() => {
+    loadFromServer();
+  }, [loadFromServer]);
   const { success, error } = useToast();
   const { confirm } = useConfirm();
   const [isEditing, setIsEditing] = useState(false);

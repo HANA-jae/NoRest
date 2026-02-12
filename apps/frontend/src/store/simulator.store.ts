@@ -5,6 +5,7 @@ import {
   type Step3Input,
   type CalculationResults,
 } from '@/utils/calculator';
+import { useHistoryStore } from './history.store';
 
 interface SimulatorState {
   // Step 1
@@ -29,6 +30,9 @@ interface SimulatorState {
 
   // UI
   currentStep: number;
+
+  // 히스토리 추적
+  currentSimulationId: string | null;
 
   // Actions
   setStep1: (data: Partial<Step1Input>) => void;
@@ -56,6 +60,7 @@ export const useSimulatorStore = create<SimulatorState>((set, get) => ({
 
   results: null,
   currentStep: 1,
+  currentSimulationId: null,
 
   setStep1: (data) => set((state) => ({ ...state, ...data })),
 
@@ -65,7 +70,53 @@ export const useSimulatorStore = create<SimulatorState>((set, get) => ({
     setTimeout(() => get().runCalculation(), 0);
   },
 
-  setCurrentStep: (step) => set({ currentStep: step }),
+  setCurrentStep: (step) => {
+    const state = get();
+    const prevStep = state.currentStep;
+
+    set({ currentStep: step });
+
+    // Step 1 → Step 2: 히스토리 레코드 생성
+    if (prevStep === 1 && step === 2) {
+      const id = useHistoryStore.getState().addSimulation({
+        completedStep: 1,
+        monthlySalary: state.monthlySalary,
+        workingDays: state.results?.workingDays ?? 0,
+        severancePay: state.results?.severancePay ?? 0,
+        survivalDays: state.results?.survivalDays ?? 0,
+        grade: state.results?.grade ?? '',
+        percentile: state.results?.percentile ?? 0,
+        step1Input: {
+          startDate: state.startDate,
+          monthlySalary: state.monthlySalary,
+          age: state.age,
+          insuranceMonths: state.insuranceMonths,
+          hasSeverancePay: state.hasSeverancePay,
+          resignationType: state.resignationType,
+        },
+      });
+      set({ currentSimulationId: id });
+    }
+
+    // Step 3 → Step 4: 히스토리 레코드 업데이트 (최종 결과)
+    if (prevStep === 3 && step === 4 && state.currentSimulationId && state.results) {
+      useHistoryStore.getState().updateSimulation(state.currentSimulationId, {
+        completedStep: 4,
+        workingDays: state.results.workingDays,
+        severancePay: state.results.severancePay,
+        survivalDays: state.results.survivalDays,
+        grade: state.results.grade,
+        percentile: state.results.percentile,
+        step3Input: {
+          rent: state.rent,
+          living: state.living,
+          insurance: state.insurance,
+          other: state.other,
+          restPeriod: state.restPeriod,
+        },
+      });
+    }
+  },
 
   runCalculation: () => {
     const state = get();
@@ -111,5 +162,6 @@ export const useSimulatorStore = create<SimulatorState>((set, get) => ({
       restPeriod: 3,
       results: null,
       currentStep: 1,
+      currentSimulationId: null,
     }),
 }));

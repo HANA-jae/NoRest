@@ -1,22 +1,33 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { UserRole } from '@han/shared';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UserResponseDto {
-  @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000' })
+  @ApiProperty({ example: 'testuser' })
   id: string;
 
   @ApiProperty({ example: 'user@example.com' })
   email: string;
 
-  @ApiProperty({ example: 'John Doe' })
+  @ApiProperty({ example: '홍길동' })
   name: string;
 
-  @ApiProperty({ enum: UserRole, example: UserRole.USER })
-  role: UserRole;
+  @ApiProperty({ example: '010-1234-5678' })
+  phone: string;
 
-  @ApiProperty()
-  createdAt: Date;
+  @ApiProperty({ example: 'user' })
+  role: string;
 
-  @ApiProperty()
-  updatedAt: Date;
+  @ApiProperty({ example: 'active' })
+  status: string;
+
+  @ApiPropertyOptional({ example: 'profile.jpg' })
+  profile?: string | null;
+
+  @ApiPropertyOptional({ example: '2026-02-12' })
+  lastLogin?: string | null;
+
+  @ApiPropertyOptional()
+  createdDate?: Date | null;
+
+  @ApiPropertyOptional()
+  modifiedDate?: Date | null;
 }

@@ -22,7 +22,7 @@ export class AuthController {
 
   @Post('register')
   @Public()
-  @ApiOperation({ summary: 'Register a new user' })
+  @ApiOperation({ summary: '회원가입' })
   @ApiBody({ type: RegisterDto })
   @ApiResponse({ status: 201, type: AuthResponseDto })
   async register(@Body() registerDto: RegisterDto) {
@@ -32,7 +32,7 @@ export class AuthController {
   @Post('login')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Login with email and password' })
+  @ApiOperation({ summary: '로그인' })
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: 200, type: AuthResponseDto })
   async login(@Body() loginDto: LoginDto) {
@@ -42,7 +42,7 @@ export class AuthController {
   @Post('refresh')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiOperation({ summary: '토큰 갱신' })
   @ApiBody({ type: RefreshTokenDto })
   @ApiResponse({ status: 200, type: AuthResponseDto })
   async refresh(@Body() refreshTokenDto: RefreshTokenDto) {
@@ -51,7 +51,7 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Logout and invalidate tokens' })
+  @ApiOperation({ summary: '로그아웃' })
   @ApiBody({ type: RefreshTokenDto })
   @ApiResponse({ status: 200 })
   async logout(@Req() req: Request, @Body() body: RefreshTokenDto) {

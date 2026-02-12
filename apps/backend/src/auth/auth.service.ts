@@ -14,6 +14,7 @@ import { Tokens } from './interfaces/tokens.interface';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { REDIS_BLACKLIST_PREFIX } from '../common/constants';
 import { User } from '../users/entities/user.entity';
+import { UserRole, UserStatus } from '@han/shared';
 
 @Injectable()
 export class AuthService {
@@ -27,8 +28,13 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const hashedPassword = await bcrypt.hash(registerDto.password, 12);
     const user = await this.usersService.create({
-      ...registerDto,
+      id: registerDto.userId,
       password: hashedPassword,
+      name: registerDto.name,
+      email: registerDto.email,
+      phone: registerDto.phone,
+      role: UserRole.USER,
+      status: UserStatus.ACTIVE,
     });
 
     const tokens = await this.generateTokenPair(user);
@@ -38,15 +44,36 @@ export class AuthService {
     };
   }
 
+  // TODO: 테스트용 하드코딩 - 프로덕션 전에 제거할 것
+  private static readonly TEST_USER = {
+    id: '123',
+    email: 'test@han.dev',
+    name: '테스트 사용자',
+    phone: '010-0000-0000',
+    role: UserRole.USER,
+    status: UserStatus.ACTIVE,
+    profile: null,
+    lastLogin: null,
+    createdDate: new Date('2026-01-01'),
+    modifiedDate: new Date('2026-01-01'),
+  };
+
   async login(loginDto: LoginDto) {
-    const user = await this.usersService.findByEmail(loginDto.email);
+    // 테스트 하드코딩 로그인
+    if (loginDto.userId === '123' && loginDto.password === '123') {
+      const testUser = AuthService.TEST_USER;
+      const tokens = await this.generateTokenPair(testUser as unknown as User);
+      return { ...tokens, user: testUser };
+    }
+
+    const user = await this.usersService.findById(loginDto.userId);
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('아이디 또는 비밀번호가 올바르지 않습니다');
     }
 
     const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('아이디 또는 비밀번호가 올바르지 않습니다');
     }
 
     const tokens = await this.generateTokenPair(user);
@@ -68,7 +95,7 @@ export class AuthService {
       );
 
       if (isBlacklisted) {
-        throw new UnauthorizedException('Refresh token has been revoked');
+        throw new UnauthorizedException('만료된 인증 토큰입니다');
       }
 
       const user = await this.usersService.findById(payload.sub);
@@ -90,7 +117,7 @@ export class AuthService {
       };
     } catch (error) {
       if (error instanceof UnauthorizedException) throw error;
-      throw new UnauthorizedException('Invalid refresh token');
+      throw new UnauthorizedException('유효하지 않은 인증 토큰입니다');
     }
   }
 
@@ -135,7 +162,7 @@ export class AuthService {
       // Refresh token may already be expired, that's fine
     }
 
-    return { message: 'Logged out successfully' };
+    return { message: '로그아웃되었습니다' };
   }
 
   private async generateTokenPair(user: User): Promise<Tokens> {
@@ -156,7 +183,7 @@ export class AuthService {
   }
 
   private sanitizeUser(user: User) {
-    const { password, ...result } = user;
+    const { password, history, provider, providerId, ...result } = user;
     return result;
   }
 }
