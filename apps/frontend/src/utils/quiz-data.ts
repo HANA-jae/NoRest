@@ -67,11 +67,11 @@ export const QUESTIONS: Question[] = [
 ];
 
 export const ANSWER_OPTIONS = [
-  { value: 0, label: '전혀', description: '전혀 그렇지 않다' },
-  { value: 1, label: '아니', description: '그렇지 않다' },
-  { value: 2, label: '보통', description: '보통이다' },
-  { value: 3, label: '그래', description: '그렇다' },
-  { value: 4, label: '매우', description: '매우 그렇다' },
+  { value: 0, label: '전혀 아니다'},
+  { value: 1, label: '아닌 편이다'},
+  { value: 2, label: '보통이다'},
+  { value: 3, label: '그런 편이다'},
+  { value: 4, label: '매우 그렇다'},
 ];
 
 export const GRADES: Record<GradeType, GradeInfo> = {

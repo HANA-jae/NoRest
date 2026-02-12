@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth.store';
 import { useHistoryStore, SimulationHistoryItem } from '@/store/history.store';
 import { useToast } from '@/components/common/Toast';
 import { useConfirm } from '@/store/confirm.store';
-import { userService } from '@/services/user.service';
 import { formatWon } from '@/utils/calculator';
 
 const tools = [
@@ -19,7 +18,6 @@ const tools = [
 
 export default function DashboardPage() {
   const user = useAuthStore((state) => state.user);
-  const setUser = useAuthStore((state) => state.setUser);
   const { removeSimulation, clearHistory, getUserSimulations, loadFromServer } = useHistoryStore();
   const simulations = getUserSimulations();
 
@@ -27,11 +25,16 @@ export default function DashboardPage() {
   useEffect(() => {
     loadFromServer();
   }, [loadFromServer]);
-  const { success, error } = useToast();
+  const { success } = useToast();
   const { confirm } = useConfirm();
-  const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState(user?.name || '');
-  const [isSaving, setIsSaving] = useState(false);
+
+  const daysWithUs = (() => {
+    if (!user?.createdDate) return 1;
+    const created = new Date(user.createdDate);
+    const now = new Date();
+    const diff = Math.floor((now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24));
+    return Math.max(diff, 1);
+  })();
 
   const handleClearHistory = async () => {
     const confirmed = await confirm({
@@ -46,70 +49,27 @@ export default function DashboardPage() {
     }
   };
 
-  const handleSave = async () => {
-    if (!name.trim() || name.length < 2) {
-      error('이름은 2자 이상이어야 합니다.');
-      return;
-    }
-    setIsSaving(true);
-    try {
-      const updated = await userService.updateProfile({ name: name.trim() });
-      setUser(updated);
-      success('저장되었습니다.');
-      setIsEditing(false);
-    } catch {
-      error('저장에 실패했습니다.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   return (
-    <div className="max-w-5xl mx-auto px-6 py-16">
+    <div className="max-w-6xl mx-auto px-6 py-16">
       {/* Header */}
       <div className="flex items-start justify-between mb-16">
         <div>
-          <p className="text-sm text-neutral-400 mb-2">Welcome back</p>
+          <p className="text-sm text-neutral-400 mb-2">퇴사여정을 함께 한 지 {daysWithUs}일차</p>
           {user && (
             <>
-              {isEditing ? (
-                <div className="flex items-center gap-3">
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="text-3xl font-bold bg-transparent border-b-2 border-neutral-900 outline-none"
-                    autoFocus
-                  />
-                  <button
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className="text-sm text-neutral-900 font-medium"
-                  >
-                    저장
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsEditing(false);
-                      setName(user.name);
-                    }}
-                    className="text-sm text-neutral-400"
-                  >
-                    취소
-                  </button>
-                </div>
-              ) : (
-                <h1
-                  onClick={() => setIsEditing(true)}
-                  className="text-3xl font-bold text-neutral-900 tracking-tight cursor-pointer hover:text-neutral-600 transition-colors"
-                >
-                  {user.name}
-                </h1>
-              )}
+              <h1 className="text-3xl font-bold text-neutral-900 tracking-tight">
+                {user.name}
+              </h1>
               <p className="text-neutral-500 mt-1">{user.email}</p>
             </>
           )}
         </div>
+        <Link
+          href="/dashboard/edit"
+          className="text-sm text-neutral-500 border border-neutral-200 rounded-lg px-4 py-2 hover:bg-neutral-50 hover:text-neutral-900 hover:border-neutral-300 transition-all"
+        >
+          정보 수정
+        </Link>
       </div>
 
       <div className="grid md:grid-cols-2 gap-16">

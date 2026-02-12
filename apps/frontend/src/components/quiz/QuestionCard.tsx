@@ -80,7 +80,7 @@ export function QuestionCard({ question, selectedValue }: QuestionCardProps) {
                   selected === option.value ? 'text-neutral-900' : 'text-neutral-300'
                 }`}
               >
-                {option.description}
+                
               </span>
             ))}
           </div>

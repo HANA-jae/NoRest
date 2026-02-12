@@ -10,6 +10,7 @@ import { useHistoryStore } from './history.store';
 interface SimulatorState {
   // Step 1
   startDate: string;
+  endDate: string;
   monthlySalary: number;
   hasSeverancePay: boolean;
   hasInterimSettlement: boolean;
@@ -44,6 +45,7 @@ interface SimulatorState {
 
 export const useSimulatorStore = create<SimulatorState>((set, get) => ({
   startDate: '',
+  endDate: new Date().toISOString().split('T')[0],
   monthlySalary: 0,
   hasSeverancePay: true,
   hasInterimSettlement: false,
@@ -124,6 +126,7 @@ export const useSimulatorStore = create<SimulatorState>((set, get) => ({
 
     const step1: Step1Input = {
       startDate: state.startDate,
+      endDate: state.endDate,
       monthlySalary: state.monthlySalary,
       hasSeverancePay: state.hasSeverancePay,
       hasInterimSettlement: state.hasInterimSettlement,

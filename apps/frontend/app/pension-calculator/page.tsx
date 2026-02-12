@@ -31,7 +31,7 @@ export default function PensionCalculatorPage() {
     new Intl.NumberFormat('ko-KR').format(value);
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-16">
+    <div className="max-w-6xl mx-auto px-6 py-16">
       <Link
         href="/"
         className="inline-flex items-center gap-2 text-sm text-neutral-400 hover:text-neutral-900 mb-12 transition-colors"
