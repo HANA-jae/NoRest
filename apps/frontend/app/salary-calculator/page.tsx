@@ -27,7 +27,7 @@ export default function SalaryCalculatorPage() {
   const netRatio = result ? ((result.netMonthlySalary / result.monthlySalary) * 100).toFixed(1) : '0';
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-16">
+    <div className="max-w-6xl mx-auto px-6 py-16">
       {/* Header */}
       <Link
         href="/"

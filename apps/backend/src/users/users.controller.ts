@@ -26,6 +26,17 @@ export class UsersController {
     return this.toResponseDto(user);
   }
 
+  @Patch('me')
+  @ApiOperation({ summary: '현재 사용자 정보 수정' })
+  @ApiResponse({ status: 200, type: UserResponseDto })
+  async updateProfile(
+    @CurrentUser('id') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    const user = await this.usersService.update(userId, updateUserDto);
+    return this.toResponseDto(user);
+  }
+
   @Get()
   @ApiOperation({ summary: '전체 사용자 조회' })
   @ApiResponse({ status: 200, type: [UserResponseDto] })

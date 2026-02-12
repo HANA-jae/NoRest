@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSimulatorStore } from '@/store/simulator.store';
+import { useStore } from 'zustand';
 
 export function Step1BasicInfo() {
   const store = useSimulatorStore();
   const [annualSalary, setAnnualSalary] = useState<number>(store.monthlySalary > 0 ? store.monthlySalary * 12 : 0);
   const [errors, setErrors] = useState<Record<string, string>>({});
-
+  
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
     if (!store.startDate) newErrors.startDate = '입사일을 입력하세요';
@@ -23,6 +24,21 @@ export function Step1BasicInfo() {
     store.setCurrentStep(2);
   };
 
+  const monthRange = (startDate: string, endDate: string): number => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    
+    return Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 30));
+  }
+
+  useEffect(() => {
+    if(store.insuranceMonths < 12) {
+      store.setStep1({ hasSeverancePay: false });
+    } else {
+      store.setStep1({ hasSeverancePay: true });
+    }
+  }, [store.insuranceMonths]);
+
   return (
     <div className="space-y-8">
       {/* 입사일 */}
@@ -34,14 +50,35 @@ export function Step1BasicInfo() {
           type="date"
           max="9999-12-31"
           value={store.startDate}
-          onChange={(e) => store.setStep1({ startDate: e.target.value })}
+          onChange={(e) => {
+              store.setStep1({ startDate: e.target.value, insuranceMonths: monthRange(e.target.value, store.endDate) || 0})
+            }
+          }
           className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
         />
         {errors.startDate && (
           <p className="mt-1 text-xs text-red-500">{errors.startDate}</p>
         )}
       </div>
-
+      {/* 퇴사(예정)일 */}
+      <div>
+        <label className="block text-sm font-medium text-neutral-700 mb-2">
+          퇴사(예정)일
+        </label>
+        <input
+          type="date"
+          max="9999-12-31"
+          value={store.endDate}
+          onChange={(e) => {
+              store.setStep1({ endDate: e.target.value, insuranceMonths: monthRange(store.startDate, e.target.value) || 0})
+            }
+          }
+          className="w-full px-4 py-3 border border-neutral-200 rounded-lg text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
+        />
+        {errors.endDate && (
+          <p className="mt-1 text-xs text-red-500">{errors.endDate}</p>
+        )}
+      </div>
       {/* 연봉 */}
       <div>
         <label className="block text-sm font-medium text-neutral-700 mb-2">
@@ -51,7 +88,7 @@ export function Step1BasicInfo() {
           <input
             type="text"
             inputMode="numeric"
-            placeholder="36,000,000"
+            placeholder="24,000,000"
             value={annualSalary ? annualSalary.toLocaleString('ko-KR') : ''}
             onChange={(e) => {
               const raw = e.target.value.replace(/[^0-9]/g, '');
@@ -102,8 +139,9 @@ export function Step1BasicInfo() {
             type="number"
             placeholder="24"
             value={store.insuranceMonths || ''}
-            onChange={(e) =>
-              store.setStep1({ insuranceMonths: Number(e.target.value) })
+            onChange={(e) => {
+                store.setStep1({ insuranceMonths: Number(e.target.value), hasSeverancePay: Number(e.target.value) < 12 ? false : true });
+              }
             }
             className="w-full px-4 py-3 pr-12 border border-neutral-200 rounded-lg text-neutral-900 bg-white focus:border-neutral-900 focus:ring-0 transition-colors"
           />

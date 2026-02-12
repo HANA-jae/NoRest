@@ -3,6 +3,7 @@
 
 export interface Step1Input {
   startDate: string;
+  endDate: string;
   monthlySalary: number;
   hasSeverancePay: boolean;
   hasInterimSettlement: boolean;

@@ -41,23 +41,26 @@ export default function HomePage() {
         <div className="w-full max-w-6xl mx-auto px-6 py-20">
           <div className="max-w-3xl">
             <p className="text-sm text-neutral-400 mb-4 tracking-wide">
-              Finish for Your new Beginning
+              
             </p>
             <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 tracking-tight leading-[1.1] mb-6">
-              복잡한 <span className="text-blue-500">마음</span>, 명확한 <span className="text-purple-500">숫자</span>로
+              그만둘까.
+              <br />
+              <span className="text-gray-500">감정</span>은 잠시 두고, <span className="text-red-400">숫자</span>부터
               <br />
               <span className="text-4xl text-neutral-400">
-                당신의 <span className="text-blue-400">고민</span>, 우리가 <span className="text-purple-400">정리</span>할게요
+                퇴사 전, 필요한 계산.
               </span>
             </h1>
-            <p className="text-lg text-neutral-500 mb-10 max-w-md">
-              퇴사, 이직, 연봉 협상에 필요한 모든 계산을 정확하고 빠르게.
+            <p className="text-lg text-neutral-600 mb-10 max-w-md">
+              퇴사, 이직, 연봉 협상에 필요한 계산을 현실 기준으로.<br />
+              감정보다 기준이 먼저입니다.<br />
             </p>
             <Link
               href="/simulator"
               className="inline-flex items-center gap-3 px-6 py-3.5 bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-colors"
             >
-              <span>시작하기</span>
+              <span>계산 시작</span>
               <span className="text-neutral-400">→</span>
             </Link>
           </div>
