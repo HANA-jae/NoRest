@@ -59,7 +59,7 @@ export interface CalculationResults {
 
 // 2024 기준 상수
 const DAILY_BENEFIT_CAP = 66000;
-const DAILY_BENEFIT_FLOOR = 61568;
+const DAILY_BENEFIT_FLOOR = 63104; // 2024년: 최저임금 9,860 × 8시간 × 80%
 const BENEFIT_RATE = 0.6;
 const NATIONAL_PENSION_RATE = 0.09;
 const HEALTH_INSURANCE_RATE = 0.0709;
@@ -106,10 +106,10 @@ function getUnemploymentBenefitDays(
   const years = insuranceMonths / 12;
 
   if (years < 1) return isOver50 ? 120 : 120;
-  if (years < 3) return isOver50 ? 150 : 120;
-  if (years < 5) return isOver50 ? 180 : 150;
-  if (years < 10) return isOver50 ? 210 : 180;
-  return isOver50 ? 240 : 210;
+  if (years < 3) return isOver50 ? 180 : 150;
+  if (years < 5) return isOver50 ? 210 : 180;
+  if (years < 10) return isOver50 ? 240 : 210;
+  return isOver50 ? 270 : 240;
 }
 
 /**

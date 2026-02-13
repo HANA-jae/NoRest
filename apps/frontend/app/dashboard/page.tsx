@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useAuthStore } from '@/store/auth.store';
 import { useHistoryStore, SimulationHistoryItem } from '@/store/history.store';
 import { useToast } from '@/components/common/Toast';
 import { useConfirm } from '@/store/confirm.store';
 import { formatWon } from '@/utils/calculator';
+import { phraseService } from '@/services/phrase.service';
 
 const tools = [
   { num: '01', title: '퇴사 시뮬레이터', href: '/simulator' },
@@ -27,6 +28,33 @@ export default function DashboardPage() {
   }, [loadFromServer]);
   const { success } = useToast();
   const { confirm } = useConfirm();
+
+  const getTodayKey = () => {
+    const now = new Date();
+    return `han-phrase-${user?.id || 'anon'}-${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+  };
+
+  // 이미 본 문구가 있으면 바로 표시
+  const cachedPhrase = typeof window !== 'undefined' && user ? localStorage.getItem(getTodayKey()) : null;
+  const [phraseText, setPhraseText] = useState<string | null>(cachedPhrase);
+  const [phraseRevealed, setPhraseRevealed] = useState(!!cachedPhrase);
+
+  const loadPhrase = useCallback(async () => {
+    const todayKey = getTodayKey();
+
+    const result = await phraseService.getDailyPhrase();
+    if (result) {
+      setPhraseText(result.text);
+      localStorage.setItem(todayKey, result.text);
+    }
+  }, []);
+
+  const handleRevealPhrase = () => {
+    setPhraseRevealed(true);
+    if (!phraseText) {
+      loadPhrase();
+    }
+  };
 
   const daysWithUs = (() => {
     if (!user?.createdDate) return 1;
@@ -70,6 +98,34 @@ export default function DashboardPage() {
         >
           정보 수정
         </Link>
+      </div>
+
+      {/* 오늘의 라떼 한 잔 */}
+      <div className="mb-12">
+        {!phraseRevealed ? (
+          <button
+            onClick={handleRevealPhrase}
+            className="w-full text-left group flex items-center gap-3 py-5 px-6 bg-neutral-50 rounded-2xl hover:bg-neutral-100 transition-colors"
+          >
+            <span className="text-2xl">&#9749;</span>
+            <span className="text-neutral-500 group-hover:text-neutral-900 transition-colors font-medium">
+              오늘의 라떼 한 잔
+            </span>
+            <span className="ml-auto text-neutral-300 group-hover:text-neutral-500 text-sm transition-colors">
+              눌러서 확인
+            </span>
+          </button>
+        ) : (
+          <div className="py-5 px-6 bg-neutral-50 rounded-2xl phrase-reveal">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-2xl">&#9749;</span>
+              <span className="text-sm text-neutral-400 font-medium">오늘의 라떼 한 잔</span>
+            </div>
+            <p className="text-neutral-700 leading-relaxed pl-9">
+              {phraseText || '...'}
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="grid md:grid-cols-2 gap-16">

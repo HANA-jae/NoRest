@@ -63,6 +63,16 @@
     animation: modal-content-enter 0.15s ease-out forwards;
   }
 
+  /* Phrase reveal */
+  @keyframes phrase-reveal {
+    from { opacity: 0; transform: translateY(8px); filter: blur(4px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  .phrase-reveal {
+    animation: phrase-reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
   /* Modern focus */
   .focus-ring:focus-visible {
     outline: 2px solid #000;

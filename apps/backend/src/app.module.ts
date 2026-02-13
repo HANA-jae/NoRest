@@ -10,6 +10,7 @@ import { CodeModule } from './code/code.module';
 import { MenuModule } from './menu/menu.module';
 import { FileModule } from './file/file.module';
 import { AuditModule } from './audit/audit.module';
+import { PhraseModule } from './phrase/phrase.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
@@ -26,6 +27,7 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
     MenuModule,
     FileModule,
     AuditModule,
+    PhraseModule,
   ],
   controllers: [AppController],
   providers: [

@@ -60,7 +60,7 @@ export default function HomePage() {
               href="/simulator"
               className="inline-flex items-center gap-3 px-6 py-3.5 bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-colors"
             >
-              <span>계산 시작</span>
+              <span>생존 기간 계산 시작</span>
               <span className="text-neutral-400">→</span>
             </Link>
           </div>
