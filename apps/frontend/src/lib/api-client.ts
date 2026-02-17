@@ -25,7 +25,6 @@ async function handleRefresh(): Promise<string | null> {
 
   if (!refreshToken) {
     logout();
-    window.location.href = '/login';
     return null;
   }
 
@@ -49,7 +48,6 @@ async function handleRefresh(): Promise<string | null> {
     return data.accessToken;
   } catch {
     logout();
-    window.location.href = '/login';
     return null;
   }
 }

@@ -35,16 +35,16 @@ export class User {
   @Column({ name: 'provider_id', type: 'varchar', length: 100, nullable: true })
   providerId: string | null;
 
-  @Column({ name: 'last_login', type: 'varchar', length: 10, nullable: true })
-  lastLogin: string | null;
+  @Column({ name: 'last_login', type: 'timestamp', nullable: true })
+  lastLogin: Date | null;
 
-  @Column({ name: 'created_date', type: 'date', nullable: true, default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ name: 'created_date', type: 'timestamp', nullable: true, default: () => 'CURRENT_TIMESTAMP' })
   createdDate: Date | null;
 
   @Column({ name: 'created_user', type: 'varchar', length: 100, nullable: true })
   createdUser: string | null;
 
-  @Column({ name: 'modified_date', type: 'date', nullable: true, default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ name: 'modified_date', type: 'timestamp', nullable: true, default: () => 'CURRENT_TIMESTAMP' })
   modifiedDate: Date | null;
 
   @Column({ name: 'modified_user', type: 'varchar', length: 100, nullable: true })

@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity('audit_logs')
+@Entity('tbl_audit_logs')
 export class AuditLog {
   @PrimaryColumn({ name: 'log_id', length: 100 })
   logId: string;

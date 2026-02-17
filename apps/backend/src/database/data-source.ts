@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import * as dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
 
@@ -9,9 +10,9 @@ export default new DataSource({
   port: parseInt(process.env.DB_PORT || '5432', 10),
   username: process.env.DB_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
-  database: process.env.DB_NAME || 'han_db',
-  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  migrations: [__dirname + '/migrations/*{.ts,.js}'],
+  database: process.env.DB_NAME || 'norest',
+  entities: ['src/**/*.entity{.ts,.js}'],
+  migrations: ['src/database/migrations/*{.ts,.js}'],
   synchronize: false,
   logging: true,
 });

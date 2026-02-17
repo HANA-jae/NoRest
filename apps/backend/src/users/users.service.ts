@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -10,8 +11,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRole, UserStatus } from '@han/shared';
 
-// TODO: 테스트용 하드코딩 - 프로덕션 전에 제거할 것
+// 테스트용 하드코딩 — NODE_ENV !== 'production'일 때만 사용
 const TEST_USER_ID = '123';
+const isTestEnabled = () => process.env.NODE_ENV !== 'production';
 const createTestUser = (): User => ({
   id: TEST_USER_ID,
   password: '',
@@ -65,10 +67,27 @@ export class UsersService {
   }
 
   async findById(id: string): Promise<User> {
-    // TODO: 테스트 유저 폴백 - 프로덕션 전에 제거할 것
-    if (id === TEST_USER_ID) {
+    // 테스트 유저 폴백 — 프로덕션 환경에서는 비활성화
+    if (isTestEnabled() && id === TEST_USER_ID) {
       const dbUser = await this.usersRepository.findOne({ where: { id } });
-      return dbUser || createTestUser();
+      if (dbUser) return dbUser;
+      // DB에 없으면 자동 생성 (FK 제약 충족)
+      const testData = createTestUser();
+      const now = new Date();
+      const newUser = this.usersRepository.create({
+        ...testData,
+        password: '',
+        createdDate: now,
+        createdUser: 'SYSTEM',
+        modifiedDate: now,
+        modifiedUser: 'SYSTEM',
+      });
+      try {
+        return await this.usersRepository.save(newUser);
+      } catch {
+        // 동시 생성 경쟁 상태 대비
+        return (await this.usersRepository.findOne({ where: { id } })) || testData;
+      }
     }
 
     const user = await this.usersRepository.findOne({ where: { id } });
@@ -94,13 +113,37 @@ export class UsersService {
 
     Object.assign(user, updateUserDto, { modifiedDate: new Date(), modifiedUser: id });
 
-    // TODO: 테스트 유저는 DB 저장 없이 메모리 반환 - 프로덕션 전에 제거할 것
-    const dbUser = await this.usersRepository.findOne({ where: { id } });
-    if (!dbUser) {
-      return user;
+    // 테스트 유저는 DB에 없을 수 있으므로 메모리 반환 — 프로덕션 환경에서는 비활성화
+    if (isTestEnabled()) {
+      const dbUser = await this.usersRepository.findOne({ where: { id } });
+      if (!dbUser) {
+        return user;
+      }
     }
 
     return this.usersRepository.save(user);
+  }
+
+  async changePassword(
+    id: string,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('사용자를 찾을 수 없습니다');
+    }
+
+    const bcrypt = await import('bcryptjs');
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      throw new BadRequestException('현재 비밀번호가 올바르지 않습니다');
+    }
+
+    user.password = await bcrypt.hash(newPassword, 12);
+    user.modifiedDate = new Date();
+    user.modifiedUser = id;
+    await this.usersRepository.save(user);
   }
 
   async remove(id: string): Promise<void> {

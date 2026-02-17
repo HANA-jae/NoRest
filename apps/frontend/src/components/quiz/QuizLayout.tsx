@@ -38,7 +38,7 @@ export function QuizLayout({ children }: QuizLayoutProps) {
   return (
     <div className="min-h-screen bg-neutral-50 flex flex-col">
       <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-neutral-100">
-        <div className="max-w-3xl mx-auto px-6 h-14 flex items-center justify-between">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <Link
             href="/"
             onClick={handleExit}

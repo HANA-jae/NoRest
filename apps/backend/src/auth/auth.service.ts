@@ -59,8 +59,26 @@ export class AuthService {
   };
 
   async login(loginDto: LoginDto) {
-    // 테스트 하드코딩 로그인
-    if (loginDto.userId === '123' && loginDto.password === '123') {
+    // 테스트 하드코딩 로그인 — 프로덕션 환경에서는 차단
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      loginDto.userId === '123' &&
+      loginDto.password === '123'
+    ) {
+      // DB에 테스트 유저가 없으면 생성 (FK 제약 조건 충족을 위해)
+      try {
+        await this.usersService.create({
+          id: '123',
+          password: await bcrypt.hash('123', 12),
+          name: AuthService.TEST_USER.name,
+          email: AuthService.TEST_USER.email,
+          phone: AuthService.TEST_USER.phone,
+          role: UserRole.USER,
+          status: UserStatus.ACTIVE,
+        });
+      } catch {
+        // 이미 존재하면 무시
+      }
       const testUser = AuthService.TEST_USER;
       const tokens = await this.generateTokenPair(testUser as unknown as User);
       return { ...tokens, user: testUser };

@@ -46,3 +46,9 @@ next-env.d.ts
 
 # opencode
 .opencode/
+
+# Implementation logs
+IMPLEMENTATION_LOG.md
+
+# Claude plans
+.claude/plans/

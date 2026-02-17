@@ -36,8 +36,8 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'jwt') {
       }
     }
 
-    // 테스트 유저는 DB 조회 없이 바로 반환
-    if (payload.sub === '123') {
+    // 테스트 유저는 DB 조회 없이 바로 반환 — 프로덕션 환경에서는 비활성화
+    if (process.env.NODE_ENV !== 'production' && payload.sub === '123') {
       return { id: '123', email: 'test@han.dev', role: 'user' };
     }
 

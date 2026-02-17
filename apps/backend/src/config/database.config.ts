@@ -1,14 +1,9 @@
 import { registerAs } from '@nestjs/config';
 
 export default registerAs('database', () => ({
-  // host: process.env.DB_HOST || 'localhost',
-  // port: parseInt(process.env.DB_PORT || '5432', 10),
-  // username: process.env.DB_USERNAME || 'postgres',
-  // password: process.env.DB_PASSWORD || 'postgres',
-  // name: process.env.DB_NAME || 'han_db',
-  host: 'pg1101.gabiadb.com',
-  port: 5432,
-  username: 'pickuser',
-  password: 'koreapicklab1@#',
-  name: 'picklab',
+  host: process.env.DB_HOST || 'localhost',
+  port: parseInt(process.env.DB_PORT || '5432', 10),
+  username: process.env.DB_USERNAME || 'postgres',
+  password: process.env.DB_PASSWORD || 'postgres',
+  name: process.env.DB_NAME || 'norest',
 }));

@@ -11,6 +11,8 @@ import { MenuModule } from './menu/menu.module';
 import { FileModule } from './file/file.module';
 import { AuditModule } from './audit/audit.module';
 import { PhraseModule } from './phrase/phrase.module';
+import { JobGuideModule } from './job-guide/job-guide.module';
+import { SimulationModule } from './simulation/simulation.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
@@ -28,6 +30,8 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
     FileModule,
     AuditModule,
     PhraseModule,
+    JobGuideModule,
+    SimulationModule,
   ],
   controllers: [AppController],
   providers: [

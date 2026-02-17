@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { FadeIn, StaggerContainer, StaggerItem, motion } from '@/components/motion';
 
 const TOOLS = [
   {
@@ -40,59 +43,78 @@ export default function HomePage() {
       <section className="flex-1 flex items-center">
         <div className="w-full max-w-6xl mx-auto px-6 py-20">
           <div className="max-w-3xl">
-            <p className="text-sm text-neutral-400 mb-4 tracking-wide">
-              
-            </p>
+            <FadeIn delay={0.1} y={0}>
+              <p className="text-sm text-neutral-400 mb-4 tracking-wide">
+
+              </p>
+            </FadeIn>
             <h1 className="text-4xl md:text-6xl font-bold text-neutral-900 tracking-tight leading-[1.1] mb-6">
-              그만둘까.
-              <br />
-              <span className="text-gray-500">감정</span>은 잠시 두고, <span className="text-red-400">숫자</span>부터
-              <br />
-              <span className="text-4xl text-neutral-400">
-                퇴사 전, 필요한 계산.
-              </span>
+              <FadeIn delay={0.15} y={12}>
+                <span className="block">그만둘까.</span>
+              </FadeIn>
+              <FadeIn delay={0.3} y={12}>
+                <span className="block">
+                  <span className="text-gray-500">감정</span>은 잠시 두고, <span className="text-red-400">숫자</span>부터
+                </span>
+              </FadeIn>
+              <FadeIn delay={0.45} y={12}>
+                <span className="block text-4xl text-neutral-400">
+                  퇴사 전, 필요한 계산.
+                </span>
+              </FadeIn>
             </h1>
-            <p className="text-lg text-neutral-600 mb-10 max-w-md">
-              퇴사, 이직, 연봉 협상에 필요한 계산을 현실 기준으로.<br />
-              감정보다 기준이 먼저입니다.<br />
-            </p>
-            <Link
-              href="/simulator"
-              className="inline-flex items-center gap-3 px-6 py-3.5 bg-neutral-900 text-white rounded-full hover:bg-neutral-800 transition-colors"
-            >
-              <span>생존 기간 계산 시작</span>
-              <span className="text-neutral-400">→</span>
-            </Link>
+            <FadeIn delay={0.6}>
+              <p className="text-lg text-neutral-600 mb-10 max-w-md">
+                퇴사, 이직, 연봉 협상에 필요한 계산을 현실 기준으로.<br />
+                감정보다 기준이 먼저입니다.<br />
+              </p>
+            </FadeIn>
+            <FadeIn delay={0.8}>
+              <motion.div whileHover={{ y: -2 }} transition={{ type: 'spring', stiffness: 400 }}>
+                <Link
+                  href="/simulator"
+                  className="inline-flex items-center gap-3 px-6 py-3.5 bg-neutral-900 text-white rounded-full hover:bg-neutral-800 hover:shadow-lg hover:shadow-neutral-900/20 transition-all"
+                >
+                  <span>생존 기간 계산 시작</span>
+                  <span className="text-neutral-400">→</span>
+                </Link>
+              </motion.div>
+            </FadeIn>
           </div>
         </div>
       </section>
 
       {/* Tools */}
       <section className="border-t border-neutral-200">
-        <div className="max-w-6xl mx-auto">
+        <StaggerContainer className="max-w-6xl mx-auto" stagger={0.08}>
           {TOOLS.map((tool) => (
-            <Link
-              key={tool.href}
-              href={tool.href}
-              className="group flex items-center justify-between px-6 py-6 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
-            >
-              <div className="flex items-center gap-8">
-                <span className="text-xs text-neutral-300 tabular-nums w-6">
-                  {tool.num}
-                </span>
-                <div>
-                  <h3 className="text-lg font-medium text-neutral-900 group-hover:text-neutral-600 transition-colors">
-                    {tool.title}
-                  </h3>
-                  <p className="text-sm text-neutral-400 mt-0.5">{tool.desc}</p>
+            <StaggerItem key={tool.href}>
+              <Link
+                href={tool.href}
+                className="group flex items-center justify-between px-6 py-6 border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
+              >
+                <div className="flex items-center gap-8">
+                  <span className="text-xs text-neutral-300 tabular-nums w-6">
+                    {tool.num}
+                  </span>
+                  <div>
+                    <h3 className="text-lg font-medium text-neutral-900 group-hover:text-neutral-600 transition-colors">
+                      {tool.title}
+                    </h3>
+                    <p className="text-sm text-neutral-400 mt-0.5">{tool.desc}</p>
+                  </div>
                 </div>
-              </div>
-              <span className="text-neutral-300 group-hover:text-neutral-900 group-hover:translate-x-1 transition-all">
-                →
-              </span>
-            </Link>
+                <motion.span
+                  className="text-neutral-300 group-hover:text-neutral-900 transition-colors"
+                  whileHover={{ x: 4 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                >
+                  →
+                </motion.span>
+              </Link>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </section>
     </div>
   );

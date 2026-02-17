@@ -9,6 +9,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
@@ -35,6 +36,17 @@ export class UsersController {
   ) {
     const user = await this.usersService.update(userId, updateUserDto);
     return this.toResponseDto(user);
+  }
+
+  @Patch('me/password')
+  @ApiOperation({ summary: '비밀번호 변경' })
+  @ApiResponse({ status: 200 })
+  async changePassword(
+    @CurrentUser('id') userId: string,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    await this.usersService.changePassword(userId, dto.currentPassword, dto.newPassword);
+    return { message: '비밀번호가 변경되었습니다' };
   }
 
   @Get()

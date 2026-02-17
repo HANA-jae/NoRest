@@ -17,4 +17,8 @@ export const userService = {
     const res = await apiClient.patch<ApiEnvelope<IUser>>('/users/me', payload);
     return res.data;
   },
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<void> {
+    await apiClient.patch('/users/me/password', { currentPassword, newPassword });
+  },
 };
