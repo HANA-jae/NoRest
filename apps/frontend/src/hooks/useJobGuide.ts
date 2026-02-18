@@ -63,8 +63,38 @@ export function useJobGuide() {
       const newStatus = !currentStatus;
       const payload: UpdateProgressPayload = { isCompleted: newStatus };
 
+      // 완료로 전환 시: 해당 단계 상태 스냅샷
+      let phaseSnapshot: { phaseTitle: string; activeCount: number; completedCount: number } | null = null;
+      if (newStatus) {
+        const currentPhases = useJobGuideStore.getState().phases;
+        for (const phase of currentPhases) {
+          if (phase.items.some((i) => i.itemCode === itemCode)) {
+            const active = phase.items.filter((i) => !i.isDisabled);
+            phaseSnapshot = {
+              phaseTitle: phase.phaseTitle,
+              activeCount: active.length,
+              completedCount: active.filter((i) => i.isCompleted).length,
+            };
+            break;
+          }
+        }
+      }
+
       // 낙관적 업데이트
       updateItemCompletion(itemCode, newStatus);
+
+      // 단계 완료 감지: 이 항목이 마지막 미완료 항목이었는지
+      if (phaseSnapshot && phaseSnapshot.completedCount === phaseSnapshot.activeCount - 1) {
+        const store = useJobGuideStore.getState();
+        const allComplete = store.phases.every((p) => {
+          const active = p.items.filter((i) => !i.isDisabled);
+          return active.length === 0 || active.every((i) => i.isCompleted);
+        });
+        store.setCelebratingPhase(phaseSnapshot.phaseTitle);
+        if (allComplete) {
+          useJobGuideStore.setState({ isAllPhasesComplete: true });
+        }
+      }
 
       // API 호출
       const success = await jobGuideService.updateProgress(itemCode, payload);
@@ -72,6 +102,8 @@ export function useJobGuide() {
       if (!success) {
         // 실패 시 롤백
         updateItemCompletion(itemCode, currentStatus);
+        useJobGuideStore.getState().setCelebratingPhase(null);
+        useJobGuideStore.setState({ isAllPhasesComplete: false });
         useToastStore.getState().error('진행 상황 업데이트에 실패했습니다.');
       }
     },

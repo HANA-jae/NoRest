@@ -14,6 +14,7 @@ import { DownloadsSection } from '@/components/job-guide/DownloadsSection';
 import { CustomItemPresets } from '@/components/job-guide/CustomItemPresets';
 import { QuickStats } from '@/components/job-guide/QuickStats';
 import { FAQSection } from '@/components/job-guide/FAQSection';
+import { PhaseCelebration } from '@/components/job-guide/PhaseCelebration';
 import { FadeIn, ScaleIn, StaggerContainer, StaggerItem, AnimatedProgress, motion, AnimatePresence } from '@/components/motion';
 import type { JobGuideItem } from '@/types';
 
@@ -78,7 +79,7 @@ export default function JobGuidePage() {
     createCustomItem,
     deleteCustomItem,
   } = useJobGuide();
-  const { activePhaseId, setActivePhaseId } = useJobGuideStore();
+  const { activePhaseId, setActivePhaseId, celebratingPhase, isAllPhasesComplete, setCelebratingPhase } = useJobGuideStore();
   const [selectedItem, setSelectedItem] = useState<JobGuideItem | null>(null);
   const [filterMode, setFilterMode] = useState<FilterMode>('all');
   const [showCustomForm, setShowCustomForm] = useState(false);
@@ -859,6 +860,16 @@ export default function JobGuidePage() {
         onSaveNote={handleSaveNote}
         onDeleteNote={handleDeleteNote}
         onSetTargetDate={handleSetTargetDate}
+      />
+
+      {/* Phase Completion Celebration */}
+      <PhaseCelebration
+        phaseTitle={celebratingPhase}
+        isAllComplete={isAllPhasesComplete}
+        onDismiss={() => {
+          setCelebratingPhase(null);
+          useJobGuideStore.setState({ isAllPhasesComplete: false });
+        }}
       />
     </div>
   );

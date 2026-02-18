@@ -14,6 +14,8 @@ interface JobGuideState {
   showDetailModal: boolean;
   showNoteEditor: boolean;
   showCustomItemForm: boolean;
+  celebratingPhase: string | null;
+  isAllPhasesComplete: boolean;
 
   // Data Actions
   setPhases: (phases: JobGuidePhase[]) => void;
@@ -48,6 +50,7 @@ interface JobGuideState {
   setShowDetailModal: (show: boolean) => void;
   setShowNoteEditor: (show: boolean) => void;
   setShowCustomItemForm: (show: boolean) => void;
+  setCelebratingPhase: (phase: string | null) => void;
 
   // 전체 진행률 재계산
   recalculateProgress: () => void;
@@ -64,6 +67,8 @@ export const useJobGuideStore = create<JobGuideState>((set, get) => ({
   showDetailModal: false,
   showNoteEditor: false,
   showCustomItemForm: false,
+  celebratingPhase: null,
+  isAllPhasesComplete: false,
 
   // Data Actions
   setPhases: (phases) => set({ phases }),
@@ -174,6 +179,8 @@ export const useJobGuideStore = create<JobGuideState>((set, get) => ({
   setShowNoteEditor: (show) => set({ showNoteEditor: show }),
 
   setShowCustomItemForm: (show) => set({ showCustomItemForm: show }),
+
+  setCelebratingPhase: (phase) => set({ celebratingPhase: phase }),
 
   // 전체 진행률 재계산
   recalculateProgress: () => {
