@@ -6,7 +6,7 @@ import { Step2Results } from '@/components/simulator/Step2Results';
 import { Step3Simulation } from '@/components/simulator/Step3Simulation';
 import { Step4Final } from '@/components/simulator/Step4Final';
 import { useSimulatorStore } from '@/store/simulator.store';
-import { AnimatePresence, motion } from '@/components/motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function SimulatorPage() {
   const currentStep = useSimulatorStore((s) => s.currentStep);

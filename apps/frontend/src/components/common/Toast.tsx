@@ -1,7 +1,7 @@
 'use client';
 
 import { useToastStore, Toast as ToastType } from '../../store/toast.store';
-import { motion, AnimatePresence } from '@/components/motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const toastStyles: Record<ToastType['type'], string> = {
   success: 'bg-neutral-900 text-white',

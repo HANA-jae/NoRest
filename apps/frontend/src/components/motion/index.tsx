@@ -311,6 +311,3 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Re-export motion for convenience
-export { motion, type Variants, type Transition } from 'framer-motion';
-export { AnimatePresence } from 'framer-motion';

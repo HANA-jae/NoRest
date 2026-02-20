@@ -3,13 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Question, ANSWER_OPTIONS, CATEGORIES } from '@/utils/quiz-data';
 import { useQuizStore } from '@/store/quiz.store';
-import {
-  motion,
-  AnimatePresence,
-  FadeIn,
-  StaggerContainer,
-  StaggerItem,
-} from '@/components/motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FadeIn, StaggerContainer, StaggerItem } from '@/components/motion';
 
 interface QuestionCardProps {
   question: Question;

@@ -15,7 +15,7 @@ import { CustomItemPresets } from '@/components/job-guide/CustomItemPresets';
 import { QuickStats } from '@/components/job-guide/QuickStats';
 import { FAQSection } from '@/components/job-guide/FAQSection';
 import { PhaseCelebration } from '@/components/job-guide/PhaseCelebration';
-import { FadeIn, ScaleIn, StaggerContainer, StaggerItem, AnimatedProgress, motion, AnimatePresence } from '@/components/motion';
+import { FadeIn, ScaleIn, StaggerContainer, StaggerItem, AnimatedProgress } from '@/components/motion';
 import type { JobGuideItem } from '@/types';
 
 type FilterMode = 'all' | 'pending' | 'completed';
@@ -80,7 +80,17 @@ export default function JobGuidePage() {
     deleteCustomItem,
   } = useJobGuide();
   const { activePhaseId, setActivePhaseId, celebratingPhase, isAllPhasesComplete, setCelebratingPhase } = useJobGuideStore();
-  const [selectedItem, setSelectedItem] = useState<JobGuideItem | null>(null);
+  const [selectedItemCode, setSelectedItemCode] = useState<string | null>(null);
+
+  // phases가 갱신되면 selectedItem도 자동으로 최신 데이터 반영
+  const selectedItem = useMemo(() => {
+    if (!selectedItemCode) return null;
+    for (const phase of phases) {
+      const item = phase.items.find((i) => i.itemCode === selectedItemCode);
+      if (item) return item;
+    }
+    return null;
+  }, [selectedItemCode, phases]);
   const [filterMode, setFilterMode] = useState<FilterMode>('all');
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('checklist');
@@ -705,7 +715,7 @@ export default function JobGuidePage() {
                               )}
                             </button>
                             <button
-                              onClick={() => !item.isDisabled && setSelectedItem(item)}
+                              onClick={() => !item.isDisabled && setSelectedItemCode(item.itemCode)}
                               disabled={item.isDisabled}
                               className={`flex-1 text-left text-sm ${
                                 item.isDisabled
@@ -785,7 +795,7 @@ export default function JobGuidePage() {
                               )}
                               {!item.isDisabled && (
                                 <button
-                                  onClick={() => setSelectedItem(item)}
+                                  onClick={() => setSelectedItemCode(item.itemCode)}
                                   className="text-neutral-300 hover:text-neutral-900 transition-colors"
                                   title="상세 보기"
                                 >
@@ -855,8 +865,8 @@ export default function JobGuidePage() {
       {/* Item Detail Modal */}
       <ItemDetailModal
         item={selectedItem}
-        isOpen={!!selectedItem}
-        onClose={() => setSelectedItem(null)}
+        isOpen={!!selectedItemCode}
+        onClose={() => setSelectedItemCode(null)}
         onSaveNote={handleSaveNote}
         onDeleteNote={handleDeleteNote}
         onSetTargetDate={handleSetTargetDate}

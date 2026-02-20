@@ -3,13 +3,13 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { calculateSalary, formatCurrency, formatCurrencyWon } from '@/utils/salary-calculator';
+import { AnimatePresence } from 'framer-motion';
 import {
   FadeIn,
   ScaleIn,
   StaggerContainer,
   StaggerItem,
   CountUp,
-  AnimatePresence,
 } from '@/components/motion';
 
 type InputMode = 'annual' | 'monthly';

@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { FadeIn, StaggerContainer, StaggerItem, motion } from '@/components/motion';
+import { motion } from 'framer-motion';
+import { FadeIn, StaggerContainer, StaggerItem } from '@/components/motion';
 
 const TOOLS = [
   {

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { useUiStore } from '@/store/ui.store';
-import { motion, AnimatePresence } from '@/components/motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function LoginModal() {
   const [userId, setUserId] = useState('');

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { motion, AnimatePresence } from '@/components/motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface PhaseCelebrationProps {
   phaseTitle: string | null;

@@ -7,12 +7,8 @@ import { useAuthStore } from '@/store/auth.store';
 import { useUiStore } from '@/store/ui.store';
 import { useAuth } from '@/hooks/useAuth';
 import { LoginModal } from '@/components/auth/LoginModal';
-import {
-  FadeIn,
-  StaggerItem,
-  motion,
-  AnimatePresence,
-} from '@/components/motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { StaggerItem } from '@/components/motion';
 
 const NAV_LINKS = [
   { href: '/job-guide', label: '이직가이드' },
@@ -66,7 +62,11 @@ export function Header() {
 
   return (
     <>
-      <FadeIn y={-20} once={true} duration={0.5}>
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+      >
         <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-sm border-b border-neutral-100">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
             {/* 로고 */}
@@ -151,7 +151,7 @@ export function Header() {
             </button>
           </div>
         </header>
-      </FadeIn>
+      </motion.div>
 
       {/* 모바일 드로어 오버레이 */}
       <AnimatePresence>

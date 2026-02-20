@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface PhaseNoteSectionProps {
   templateId: number;
@@ -21,6 +21,13 @@ export function PhaseNoteSection({
   const [isEditing, setIsEditing] = useState(false);
   const [noteText, setNoteText] = useState(phaseNote || '');
   const [isSaving, setIsSaving] = useState(false);
+
+  // 서버에서 갱신된 데이터가 props로 내려오면 로컬 상태 동기화
+  useEffect(() => {
+    if (!isEditing) {
+      setNoteText(phaseNote || '');
+    }
+  }, [phaseNote, isEditing]);
 
   const hasNote = Boolean(phaseNote);
   const noteChanged = noteText.trim() !== (phaseNote || '');

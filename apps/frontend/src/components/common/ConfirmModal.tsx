@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useConfirmStore } from '@/store/confirm.store';
-import { motion, AnimatePresence } from '@/components/motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function ConfirmModal() {
   const {

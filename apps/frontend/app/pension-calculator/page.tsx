@@ -7,6 +7,7 @@ import {
   formatMillion,
   formatFullCurrency,
 } from '@/utils/pension-calculator';
+import { AnimatePresence } from 'framer-motion';
 import {
   FadeIn,
   StaggerContainer,
@@ -15,7 +16,6 @@ import {
   ScaleIn,
   CountUp,
   AnimatedProgress,
-  AnimatePresence,
 } from '@/components/motion';
 
 export default function PensionCalculatorPage() {
